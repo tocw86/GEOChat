@@ -39,8 +39,8 @@
             socket.emit('send_position', export_json);
         }
 
-        socket.on('update_markers', function (u_table) {
-            console.log(u_table);
+        socket.on('update_markers', function (usersData) {
+            console.log(usersData);
         });
 
         getLocation();
