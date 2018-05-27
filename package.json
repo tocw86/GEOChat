@@ -2,18 +2,26 @@
   "name": "gchat",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "npm": "^6.1.0"
+    "express": "^4.16.3",
+    "keypair": "^1.0.1",
+    "npm": "^6.1.0",
+    "socket.io": "^2.1.1",
+    "typings": "^2.1.1"
   },
   "devDependencies": {
+    "buffer": "^5.1.0",
+    "crypto-browserify": "^3.12.0",
     "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
     "gulp-typescript": "^4.0.2",
+    "gulp-uglify": "^3.0.0",
     "typescript": "^2.8.3"
   }
 }
