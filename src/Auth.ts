@@ -40,7 +40,7 @@ export class Auth {
     }
 
 
-    public  decrypt(cypher: string): string {
+    public decrypt(cypher: string): string {
         if (!this.enabled)
             return cypher;
 
@@ -62,5 +62,11 @@ export class Auth {
         return this.lng;
     }
  
+    public getPrivateKey():string{
+        return this.privateKey;
+    }
+    public getPublicKey():string{
+        return this.publicKey;
+    }
 
 }

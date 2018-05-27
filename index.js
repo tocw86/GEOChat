@@ -1,35 +1,42 @@
-
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var user_positions = [];
 var keypair = require('keypair');
-var user = require('./dist/auth');
+var auth = require('./dist/auth');
+var warehouse = require('./dist/warehouse');
+var map = require('./dist/map');
 
-app.get('/', function(req, res){
+var users = new warehouse.Warehouse();
+
+
+app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
-io.on('connection', function(socket){
-    socket.on('send_position', function(export_json){
+io.on('connection', function (socket) {
+  socket.on('send_position', function (export_json) {
 
-        var keys = keypair();
-        var position = JSON.parse(export_json);
-        var elt = user.Auth(keys.public, keys.private,position.lat, position.lng);
-        
-        console.log(elt);
+    var keys = keypair();
+    var position = JSON.parse(export_json);
+    var elt = new auth.Auth(keys.public, keys.private, position.lat, position.lng);
 
-        // user_positions.push({
-        //   id:elt.getId(),
-        //   lat:elt.getLat(),
-        //   lng:elt.getLng(),
-        // });
+    users.insert({
+      id: elt.getId(),
+      lat: elt.getLat(),
+      lng: elt.getLng(),
+    }, elt.getPrivateKey(), elt.getPublicKey());
 
-        io.emit('update_markers',JSON.stringify(user_positions));
+    var userMap = new map.Map();
+    
+    userMap.initMap({
+      lat: elt.getLat(),
+      lng: elt.getLng()
     });
-  });
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+    io.emit('update_markers', JSON.stringify(users.getUsers()));
+  });
 });
 
+http.listen(3000, function () {
+  console.log('listening on *:3000');
+});

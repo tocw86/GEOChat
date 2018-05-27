@@ -39,6 +39,12 @@ var Auth = /** @class */ (function () {
     Auth.prototype.getLng = function () {
         return this.lng;
     };
+    Auth.prototype.getPrivateKey = function () {
+        return this.privateKey;
+    };
+    Auth.prototype.getPublicKey = function () {
+        return this.publicKey;
+    };
     return Auth;
 }());
 exports.Auth = Auth;
