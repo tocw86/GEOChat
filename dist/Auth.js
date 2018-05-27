@@ -3,13 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var buffer_1 = require("buffer");
 var crypto = require("crypto-browserify");
 var Auth = /** @class */ (function () {
-    function Auth(jsonString) {
-        var json = JSON.parse(jsonString);
-        this.lat = json.lat;
-        this.lng = json.lng;
-        this.publicKey = json.publicKey;
-        this.privateKey = json.privateKey;
+    function Auth(publicKey, privateKey, lat, lng) {
+        this.lat = lat;
+        this.lng = lng;
+        this.publicKey = publicKey;
+        this.privateKey = privateKey;
         this.enabled = true;
+        console.log('Zapisano dane usera');
     }
     Auth.prototype.isEnabled = function () {
         return this.enabled;

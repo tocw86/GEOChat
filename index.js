@@ -4,7 +4,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var user_positions = [];
 var keypair = require('keypair');
-var auth = require('./dist/Auth');
+var user = require('./dist/Auth');
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -14,9 +14,8 @@ io.on('connection', function(socket){
     socket.on('send_position', function(export_json){
 
         var keys = keypair();
-
-        console.log(keys);
-
+      var position = JSON.parse(export_json);
+        var elt = user.Auth(keys.public, keys.private,position.lat, position.lng);
         
         user_positions.push(JSON.parse(export_json));
         io.emit('update_markers',JSON.stringify(user_positions));

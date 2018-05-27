@@ -10,13 +10,15 @@ export class Auth {
     private lat: number;
     private lng: number;
 
-    constructor(jsonString: string) {
-        let json: any = JSON.parse(jsonString);
-        this.lat = json.lat;
-        this.lng = json.lng;
-        this.publicKey = json.publicKey;
-        this.privateKey = json.privateKey;
+    constructor(publicKey: string, privateKey: string, lat: number, lng: number) {
+
+        this.lat = lat;
+        this.lng = lng;
+        this.publicKey = publicKey;
+        this.privateKey = privateKey;
         this.enabled = true;
+
+        console.log('Zapisano dane usera');
     }
 
     isEnabled(): boolean {
@@ -43,12 +45,5 @@ export class Auth {
 
         return plaintext.toString('utf8')
     }
-
-
-
-
-
-
-
 
 }
