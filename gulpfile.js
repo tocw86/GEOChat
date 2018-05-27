@@ -3,19 +3,17 @@ var ts = require("gulp-typescript");
 var tsProject = ts.createProject("tsconfig.json");
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
-var pump = require('pump');
 
-gulp.task("default", function () {
-    return gulp.src([
-        'src/.d.ts',
-        'src/Auth.ts',
-        'src/Main.ts',
-        'src/Transport.ts',
-    ])
-    .pipe(ts({
-        module:'system',
-        noImplicitAny: true,
-        out: 'core.js'
-    }))
+gulp.task("ts", function () {
+    return tsProject.src()
+        .pipe(tsProject())
         .pipe(gulp.dest("dist"));
 });
+gulp.task("scripts", function () {
+    return gulp.src('dist/*.js')
+        .pipe(concat('core.js'))
+        .pipe(uglify())
+        .pipe(gulp.dest("core"));
+});
+
+gulp.task('default', ['ts']);

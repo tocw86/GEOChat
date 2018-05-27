@@ -1,7 +1,9 @@
 {
     "files": [
+        "src/.d.ts",
+        "src/Auth.ts",
         "src/Main.ts",
-        "src/Transport.ts"
+        "src/Transport.ts",
     ],
     "compilerOptions": {
         "noImplicitAny": true,

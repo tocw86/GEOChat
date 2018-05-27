@@ -4,7 +4,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var user_positions = [];
 var keypair = require('keypair');
-var test = require('./dist/Main');
+var auth = require('./dist/Auth');
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -12,7 +12,12 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket){
     socket.on('send_position', function(export_json){
-        test.makeUser();
+
+        var keys = keypair();
+
+        console.log(keys);
+
+        
         user_positions.push(JSON.parse(export_json));
         io.emit('update_markers',JSON.stringify(user_positions));
     });
