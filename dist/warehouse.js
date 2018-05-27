@@ -16,6 +16,12 @@ var Warehouse = /** @class */ (function () {
     Warehouse.prototype.getUsers = function () {
         return this.users;
     };
+    Warehouse.prototype.removeUser = function (id) {
+        this.users.map(function (item, key) {
+            console.log(id);
+            console.log(item.id);
+        });
+    };
     return Warehouse;
 }());
 exports.Warehouse = Warehouse;

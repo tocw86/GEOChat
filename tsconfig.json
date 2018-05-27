@@ -4,13 +4,10 @@
         "src/helpers.ts",
         "src/auth.ts",
         "src/warehouse.ts",
-        "src/map.ts",
     ],
     "compilerOptions": {
         "noImplicitAny": true,
         "target": "es5",
-        "types": [
-            "googlemaps"
-          ]
+        
     }
 }

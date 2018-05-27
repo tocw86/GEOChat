@@ -12,7 +12,7 @@ export class Auth {
 
     private id: string;
  
-    constructor(publicKey: string, privateKey: string, lat: number, lng: number) {
+    constructor(publicKey: string, privateKey: string, lat: number, lng: number, id:string) {
  
         this.lat = lat;
         this.lng = lng;
@@ -20,7 +20,7 @@ export class Auth {
         this.privateKey = privateKey;
         this.enabled = true;
 
-        this.id = generateString();
+        this.id = id;
 
         console.log('Zapisano dane usera');
     }

@@ -21,4 +21,14 @@ export class Warehouse {
         return this.users;
     }
 
+    public removeUser(id:string):void{
+ 
+        this.users.map(function(item,key){
+            if(id == item.id){
+                this.users.splice(key,1);
+            }
+        });
+      
+    }
+
 }
