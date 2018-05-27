@@ -1,7 +1,7 @@
 import { Buffer } from 'buffer';
 import * as crypto from "crypto-browserify";
-import { Helpers } from './Heplers';
-export class Auth extends Helpers{
+import { generateString } from './helpers';
+export class Auth {
 
     private publicKey: string;
     private privateKey: string;
@@ -13,23 +13,23 @@ export class Auth extends Helpers{
     private id: string;
  
     constructor(publicKey: string, privateKey: string, lat: number, lng: number) {
-        super();
+ 
         this.lat = lat;
         this.lng = lng;
         this.publicKey = publicKey;
         this.privateKey = privateKey;
         this.enabled = true;
 
-        this.id = this.generateString();
+        this.id = generateString();
 
         console.log('Zapisano dane usera');
     }
 
-    isEnabled(): boolean {
+    public isEnabled(): boolean {
         return this.enabled;
     }
 
-    encrypt(plaintext: string): string {
+    public  encrypt(plaintext: string): string {
         if (!this.enabled)
             return plaintext;
 
@@ -40,7 +40,7 @@ export class Auth extends Helpers{
     }
 
 
-    decrypt(cypher: string): string {
+    public  decrypt(cypher: string): string {
         if (!this.enabled)
             return cypher;
 
@@ -50,15 +50,15 @@ export class Auth extends Helpers{
         return plaintext.toString('utf8')
     }
 
-    getId(): string {
+   public getId(): string {
         return this.id;
     }
 
-    getLat(): number {
+    public  getLat(): number {
         return this.lat;
     }
 
-    getLng(): number {
+    public  getLng(): number {
         return this.lng;
     }
  
