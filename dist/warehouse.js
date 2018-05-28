@@ -17,9 +17,11 @@ var Warehouse = /** @class */ (function () {
         return this.users;
     };
     Warehouse.prototype.removeUser = function (id) {
+        var self = this;
         this.users.map(function (item, key) {
-            console.log(id);
-            console.log(item.id);
+            if (id == item.id) {
+                self.users.splice(key, 1);
+            }
         });
     };
     return Warehouse;

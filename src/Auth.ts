@@ -22,7 +22,7 @@ export class Auth {
 
         this.id = id;
 
-        console.log('Zapisano dane usera');
+        console.log('Zapisano dane usera:' + id);
     }
 
     public isEnabled(): boolean {

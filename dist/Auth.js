@@ -10,7 +10,7 @@ var Auth = /** @class */ (function () {
         this.privateKey = privateKey;
         this.enabled = true;
         this.id = id;
-        console.log('Zapisano dane usera');
+        console.log('Zapisano dane usera:' + id);
     }
     Auth.prototype.isEnabled = function () {
         return this.enabled;

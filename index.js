@@ -26,10 +26,7 @@ io.on('connection', function (socket) {
       lng: elt.getLng(),
     }, elt.getPrivateKey(), elt.getPublicKey());
  
-    io.emit('set_user_id', elt.getId());
     io.emit('update_markers', JSON.stringify(users.getUsers()));
-
-    return elt.getId();
   });
  
 

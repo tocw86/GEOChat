@@ -22,10 +22,10 @@ export class Warehouse {
     }
 
     public removeUser(id:string):void{
- 
+        var self = this;
         this.users.map(function(item,key){
             if(id == item.id){
-                this.users.splice(key,1);
+                self.users.splice(key,1);
             }
         });
       
