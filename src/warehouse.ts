@@ -11,7 +11,7 @@ export class Warehouse {
     public insert(user: any, privateKey: string, publicKey: string): void {
         this.users.push(user);
         this.keys.push({
-            id: user.id,
+            user_id: user.user_id,
             privateKey: privateKey,
             publicKey: publicKey
         });
@@ -21,10 +21,10 @@ export class Warehouse {
         return this.users;
     }
 
-    public removeUser(id:string):void{
+    public removeUser(user_id:string):void{
         var self = this;
         this.users.map(function(item,key){
-            if(id == item.id){
+            if(user_id == item.user_id){
                 self.users.splice(key,1);
             }
         });

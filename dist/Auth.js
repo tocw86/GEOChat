@@ -3,14 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var buffer_1 = require("buffer");
 var crypto = require("crypto-browserify");
 var Auth = /** @class */ (function () {
-    function Auth(publicKey, privateKey, lat, lng, id) {
-        this.lat = lat;
-        this.lng = lng;
+    function Auth(publicKey, privateKey, user_id) {
         this.publicKey = publicKey;
         this.privateKey = privateKey;
         this.enabled = true;
-        this.id = id;
-        console.log('Zapisano dane usera:' + id);
+        this.user_id = user_id;
+        console.log('Zapisano dane usera:' + user_id);
     }
     Auth.prototype.isEnabled = function () {
         return this.enabled;
@@ -30,13 +28,7 @@ var Auth = /** @class */ (function () {
         return plaintext.toString('utf8');
     };
     Auth.prototype.getId = function () {
-        return this.id;
-    };
-    Auth.prototype.getLat = function () {
-        return this.lat;
-    };
-    Auth.prototype.getLng = function () {
-        return this.lng;
+        return this.user_id;
     };
     Auth.prototype.getPrivateKey = function () {
         return this.privateKey;

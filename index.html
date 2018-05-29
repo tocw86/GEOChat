@@ -12,151 +12,23 @@
     <title></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="leaflet/leaflet.css" />
+    <script src="leaflet/leaflet.js"></script>
+    <script src="init.js"></script>
     <style>
-        /* Set the size of the div element that contains the map */
-
-        #map {
-            height: 400px;
-            /* The height is 400 pixels */
-            width: 100%;
-            /* The width is the width of the web page */
-        }
+        #map { height: 400px; width:100% }
     </style>
-
 </head>
 
 <body>
     <div id="map"></div>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfzFAWyEyfFRCkVKzRmPl0fIraX1Ln0_U"></script>
-
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
         ;
         (function () {
-
-            var socket = io();
-            var map;
-            var id;
-            var markers = [];
-            var myPos;
-
-
-            function getLocation() {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(showPosition);
-                } else {
-                    alert("Geolocation is not supported by this browser.");
-                }
-            }
-
-            function showPosition(position) {
-
-                if (position == null) {
-                    alert("Geolocation is not supported by this browser.");
-                }
-
-                myPos = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-
-                initMap(myPos);
-
-                id = Math.random().toString(36).replace('0.', '');
-                myPos.id = id;
-
-                var export_json = JSON.stringify(myPos);
-                socket.emit('send_position', export_json);
-
-            }
-
-            function initMap(myPos) {
-                map = new google.maps.Map(document.getElementById('map'), {
-                    center: myPos,
-                    zoom: 16
-                });
-
-                google.maps.event.addListener(map, 'click', function (event) {
-                    var result = [event.latLng.lat(), event.latLng.lng()];
-                    console.log(result);
-                    transition(result);
-                });
-                // var marker = new google.maps.Marker({position: myPos, map: map});
-
-            }
-
-
-
-            socket.on('update_markers', function (usersData) {
-
-                if (markers.length > 0) {
-                    for (var i = 0; i < markers.length; i++) {
-                        markers[i].marker.setMap(null);
-                    }
-                }
-
-                var data = JSON.parse(usersData);
-                markers = data.map(function (location, i) {
-                    return {
-                        id: location.id,
-                        marker: new google.maps.Marker({
-                            position: {
-                                lat: location.lat,
-                                lng: location.lng,
-                            },
-                            map: map
-                        })
-                    };
-                });
-
-
-
-            });
-
-            getLocation();
-
-            window.onunload = function () {
-                for (var i = 0; i < markers.length; i++) {
-                    if (markers[i].id == id)
-                        markers[i].marker.setMap(null);
-                }
-                socket.emit('user_exit', id);
-            };
-
-            var numDeltas = 100;
-            var delay = 10; //milliseconds
-            var i = 0;
-            var deltaLat;
-            var deltaLng;
-
-            function transition(result) {
-                i = 0;
-                deltaLat = (result[0] - myPos.lat) / numDeltas;
-                deltaLng = (result[1] - myPos.lng) / numDeltas;
-                moveMarker();
-            }
-
-            function moveMarker() {
-                myPos.lat += deltaLat;
-                myPos.lng += deltaLng;
-                var latlng = new google.maps.LatLng(myPos.lat, myPos.lng);
-                getMyMarker().setTitle("Latitude:" + myPos.lat + " | Longitude:" + myPos.lng);
-                getMyMarker().setPosition(latlng);
-                if (i != numDeltas) {
-                    i++;
-                    setTimeout(moveMarker, delay);
-                }
-            }
-
-            function getMyMarker() {
-                console.log(markers);
-                for (var i = 0; i < markers.length; i++) {
-                    if (markers[i].id == id)
-                        return markers[i].marker;
-                }
-            }
+            var socket = io.connect('http://localhost:3000');
+            var user = new Init(socket);
 
         })();
     </script>

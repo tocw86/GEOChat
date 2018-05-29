@@ -6,23 +6,17 @@ export class Auth {
     private publicKey: string;
     private privateKey: string;
     private enabled: boolean;
-
-    private lat: number;
-    private lng: number;
-
-    private id: string;
+    private user_id: string;
  
-    constructor(publicKey: string, privateKey: string, lat: number, lng: number, id:string) {
+    constructor(publicKey: string, privateKey: string,  user_id:string) {
  
-        this.lat = lat;
-        this.lng = lng;
         this.publicKey = publicKey;
         this.privateKey = privateKey;
         this.enabled = true;
 
-        this.id = id;
+        this.user_id = user_id;
 
-        console.log('Zapisano dane usera:' + id);
+        console.log('Zapisano dane usera:' + user_id);
     }
 
     public isEnabled(): boolean {
@@ -51,15 +45,7 @@ export class Auth {
     }
 
    public getId(): string {
-        return this.id;
-    }
-
-    public  getLat(): number {
-        return this.lat;
-    }
-
-    public  getLng(): number {
-        return this.lng;
+        return this.user_id;
     }
  
     public getPrivateKey():string{

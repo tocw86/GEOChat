@@ -4,6 +4,8 @@
         "src/helpers.ts",
         "src/auth.ts",
         "src/warehouse.ts",
+        "src/init.ts",
+        "src/geomap.ts",
     ],
     "compilerOptions": {
         "noImplicitAny": true,
