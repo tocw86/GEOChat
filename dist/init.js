@@ -9,6 +9,18 @@ var Init = /** @class */ (function () {
         this.token = 'pk.eyJ1IjoidG9jdzg2IiwiYSI6ImNqaHM0YTh2bzA3bDUzN254Mndyb2c4dm0ifQ.3eIb7F5PV-E6pBugRhs4cQ';
         this.usersMarkers = [];
         /**
+     * Run after get geo action
+     */
+        this.run = function (position) {
+            _this.setUserDate(position);
+            _this.sendUserData();
+            _this.windowEvents();
+            _this.initMap();
+            _this.setUserMarker();
+            _this.mapEvents();
+            _this.triggerSocketEvents();
+        };
+        /**
          * Set user safe data
          * @return void
          */
@@ -41,6 +53,9 @@ var Init = /** @class */ (function () {
          */
         this.triggerSocketEvents = function () {
             var self = _this;
+            /**
+             * Load all users
+             */
             _this.socket.on('load_users', function (usersData) {
                 var data = JSON.parse(usersData);
                 for (var i = 0; i < data.length; i++) {
@@ -53,6 +68,9 @@ var Init = /** @class */ (function () {
                     }
                 }
             });
+            /**
+            * Load logged in user
+            */
             _this.socket.on('load_user', function (usersData) {
                 var data = JSON.parse(usersData);
                 if (data.user_id != this.user_id) {
@@ -63,6 +81,9 @@ var Init = /** @class */ (function () {
                     });
                 }
             });
+            /**
+             * Event after user move marker
+             */
             _this.socket.on('move_marker', function (usersData) {
                 var data = JSON.parse(usersData);
                 for (var i = 0; i < self.usersMarkers.length; i++) {
@@ -74,10 +95,37 @@ var Init = /** @class */ (function () {
                     }
                 }
             });
+            /**
+             * Remove user marker
+             */
             _this.socket.on('remove_marker', function (user_id) {
                 for (var i = 0; i < self.usersMarkers.length; i++) {
                     if (user_id == self.usersMarkers[i].user_id) {
                         self.usersMarkers[i].marker.remove();
+                    }
+                }
+            });
+            /**
+             * Remove disconnected markers
+             */
+            _this.socket.on('update_users', function (userData) {
+                var data = JSON.parse(userData);
+                if (data.length > 0 && self.usersMarkers.length > 0) {
+                    for (var i = 0; i < self.usersMarkers.length; i++) {
+                        self.usersMarkers[i].marker.remove();
+                    }
+                    self.usersMarkers = [];
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].user_id != self.user_id) {
+                            var marker = L.marker([data[i].lat, data[i].lng]).addTo(self.map);
+                            self.usersMarkers.push({
+                                user_id: data[i].user_id,
+                                marker: marker
+                            });
+                        }
+                        else {
+                            self.setUserMarker();
+                        }
                     }
                 }
             });
@@ -86,7 +134,7 @@ var Init = /** @class */ (function () {
          * Init map
          */
         this.initMap = function () {
-            _this.map = L.map('map').setView([_this.lat, _this.lng], 18);
+            _this.map = L.map('map').setView([_this.lat, _this.lng], 12);
             L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + _this.token, {
                 attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
                 maxZoom: 18,
@@ -122,18 +170,6 @@ var Init = /** @class */ (function () {
         this.updateUserData = function () {
             _this.socket.emit('update_user', _this.getJsonFromUser());
         };
-        /**
-         * Run after get geo action
-         */
-        this.run = function (position) {
-            _this.setUserDate(position);
-            _this.sendUserData();
-            // this.windowEvents();
-            _this.initMap();
-            _this.setUserMarker();
-            _this.mapEvents();
-            _this.triggerSocketEvents();
-        };
         this.socket = socket;
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(this.run);
@@ -148,9 +184,9 @@ var Init = /** @class */ (function () {
      */
     Init.prototype.windowEvents = function () {
         var self = this;
-        window.onunload = function () {
+        window.addEventListener('beforeunload', function (e) {
             self.socket.emit('remove_user', self.user_id);
-        };
+        });
     };
     return Init;
 }());

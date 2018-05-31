@@ -31,6 +31,7 @@ app.get('/leaflet/images/marker-shadow.png', function (req, res) {
 });
 
 var users = new warehouse.Warehouse();
+var disconnected = [];
 // When a client connects, we note it in the console
 io.sockets.on('connection', function (socket) {
     var id = null;
@@ -38,7 +39,7 @@ io.sockets.on('connection', function (socket) {
         var keys = keypair();
         var user_data = JSON.parse(data);
         var elt = new auth.Auth(keys.public, keys.private, user_data.user_id);
-       
+
         id = user_data.user_id;
 
         var allUsers = users.getUsers();
@@ -67,11 +68,25 @@ io.sockets.on('connection', function (socket) {
         socket.broadcast.emit('move_marker', userData);
 
     });
+    socket.on('remove_user', function (userId) {
+        console.log('Klient: ' + userId + ' opuscił czat!');
+        users.removeUser(userId);
+        socket.broadcast.emit('remove_marker', userId);
+       // socket.broadcast.emit('update_users', JSON.stringify(users.getUsers()));
+     });
 
     socket.on('disconnect', function () {
-        console.log('Klient: ' + id + ' opuscił czat!');
-        users.removeUser(id);
-        socket.broadcast.emit('remove_marker', id);
+
+        setTimeout(function () {
+ 
+                console.log('Disconnected: ' + id);
+                users.removeUser(id);
+                socket.broadcast.emit('remove_marker', id);
+  
+
+        }, 500);
+
+
     });
 
 });

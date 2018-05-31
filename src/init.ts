@@ -26,14 +26,34 @@ class Init {
     }
 
     /**
+ * Run after get geo action
+ */
+    public run = (position: any) => {
+
+        this.setUserDate(position)
+
+        this.sendUserData();
+
+        this.windowEvents();
+
+        this.initMap();
+
+        this.setUserMarker();
+
+        this.mapEvents();
+
+        this.triggerSocketEvents();
+    }
+
+    /**
      * Trigger window events
      * @return void
      */
     private windowEvents(): void {
         var self = this;
-        window.onunload = function () {
+        window.addEventListener('beforeunload', function (e) {
             self.socket.emit('remove_user', self.user_id);
-        }
+        });
     }
 
     /**
@@ -73,6 +93,9 @@ class Init {
     private triggerSocketEvents = (): void => {
         var self = this;
 
+        /**
+         * Load all users
+         */
         this.socket.on('load_users', function (usersData: string) {
             var data = JSON.parse(usersData);
 
@@ -90,7 +113,9 @@ class Init {
             }
         });
 
-        
+        /**
+        * Load logged in user
+        */
         this.socket.on('load_user', function (usersData: string) {
             var data = JSON.parse(usersData);
 
@@ -105,10 +130,12 @@ class Init {
             }
         });
 
-
+        /**
+         * Event after user move marker
+         */
         this.socket.on('move_marker', function (usersData: string) {
             var data = JSON.parse(usersData);
- 
+
             for (var i = 0; i < self.usersMarkers.length; i++) {
                 if (data.user_id == self.usersMarkers[i].user_id) {
                     self.usersMarkers[i].marker.setLatLng({
@@ -121,7 +148,10 @@ class Init {
 
         });
 
-        this.socket.on('remove_marker', function(user_id:string){
+        /**
+         * Remove user marker
+         */
+        this.socket.on('remove_marker', function (user_id: string) {
             for (var i = 0; i < self.usersMarkers.length; i++) {
                 if (user_id == self.usersMarkers[i].user_id) {
                     self.usersMarkers[i].marker.remove();
@@ -130,6 +160,42 @@ class Init {
             }
         });
 
+
+        /**
+         * Remove disconnected markers
+         */
+        this.socket.on('update_users', function (userData: string) {
+
+            var data = JSON.parse(userData);
+
+            if (data.length > 0 && self.usersMarkers.length > 0) {
+
+                for (var i = 0; i < self.usersMarkers.length; i++) {
+                    self.usersMarkers[i].marker.remove();
+                }
+
+                self.usersMarkers = [];
+
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].user_id != self.user_id) {
+                        var marker = L.marker([data[i].lat, data[i].lng]).addTo(self.map);
+                        self.usersMarkers.push(
+                            {
+                                user_id: data[i].user_id,
+                                marker: marker
+                            }
+                        );
+                    } else {
+                        self.setUserMarker();
+                    }
+
+                }
+
+
+            }
+
+
+        });
     }
 
     /**
@@ -137,7 +203,7 @@ class Init {
      */
     private initMap = (): void => {
 
-        this.map = L.map('map').setView([this.lat, this.lng], 18);
+        this.map = L.map('map').setView([this.lat, this.lng], 12);
 
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + this.token, {
             attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -169,7 +235,6 @@ class Init {
                 self.lng = event.latlng.lng;
 
                 self.marker.setLatLng(event.latlng);
-
                 self.updateUserData();
 
             }
@@ -183,23 +248,4 @@ class Init {
         this.socket.emit('update_user', this.getJsonFromUser());
     }
 
-    /**
-     * Run after get geo action
-     */
-    public run = (position: any) => {
-
-        this.setUserDate(position)
-
-        this.sendUserData();
-
-        // this.windowEvents();
-
-        this.initMap();
-
-        this.setUserMarker();
-
-        this.mapEvents();
-
-        this.triggerSocketEvents();
-    }
 }
