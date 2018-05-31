@@ -72,7 +72,6 @@ io.sockets.on('connection', function (socket) {
         console.log('Klient: ' + userId + ' opuscił czat!');
         users.removeUser(userId);
         socket.broadcast.emit('remove_marker', userId);
-       // socket.broadcast.emit('update_users', JSON.stringify(users.getUsers()));
      });
 
     socket.on('disconnect', function () {

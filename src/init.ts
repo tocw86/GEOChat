@@ -160,42 +160,6 @@ class Init {
             }
         });
 
-
-        /**
-         * Remove disconnected markers
-         */
-        this.socket.on('update_users', function (userData: string) {
-
-            var data = JSON.parse(userData);
-
-            if (data.length > 0 && self.usersMarkers.length > 0) {
-
-                for (var i = 0; i < self.usersMarkers.length; i++) {
-                    self.usersMarkers[i].marker.remove();
-                }
-
-                self.usersMarkers = [];
-
-                for (var i = 0; i < data.length; i++) {
-                    if (data[i].user_id != self.user_id) {
-                        var marker = L.marker([data[i].lat, data[i].lng]).addTo(self.map);
-                        self.usersMarkers.push(
-                            {
-                                user_id: data[i].user_id,
-                                marker: marker
-                            }
-                        );
-                    } else {
-                        self.setUserMarker();
-                    }
-
-                }
-
-
-            }
-
-
-        });
     }
 
     /**
