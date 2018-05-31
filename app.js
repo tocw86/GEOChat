@@ -20,6 +20,12 @@ app.get('/leaflet/leaflet.css', function (req, res) {
 app.get('/init.js', function (req, res) {
     res.sendFile(__dirname + '/dist/init.js');
 });
+app.get('/leaflet/images/marker-icon-green.png', function (req, res) {
+    res.sendFile(__dirname + '/leaflet/images/marker-icon-green.png');
+});
+app.get('/leaflet/images/marker-icon-red.png', function (req, res) {
+    res.sendFile(__dirname + '/leaflet/images/marker-icon-red.png');
+});
 app.get('/leaflet/images/marker-icon.png', function (req, res) {
     res.sendFile(__dirname + '/leaflet/images/marker-icon.png');
 });

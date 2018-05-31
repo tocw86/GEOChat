@@ -10,10 +10,11 @@ gulp.task("ts", function () {
         .pipe(gulp.dest("dist"));
 });
 gulp.task("scripts", function () {
-    return gulp.src('dist/*.js')
-        .pipe(concat('core.js'))
+    return gulp.src('dist/init.js')
         .pipe(uglify())
-        .pipe(gulp.dest("core"));
+        .pipe(gulp.dest("dist"));
 });
+
+gulp.watch('dist/init.js',['scripts'])
 
 gulp.task('default', ['ts']);

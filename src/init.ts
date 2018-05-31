@@ -8,6 +8,22 @@ class Init {
     private socket: any;
     private marker: any;
     private usersMarkers: Array<any> = [];
+    private icons:Array<any> = [
+     L.icon({
+            iconUrl: 'leaflet/images/marker-icon-red.png',
+            shadowUrl: 'leaflet/images/marker-shadow.png',
+        }), 
+     L.icon({
+            iconUrl: 'leaflet/images/marker-icon-green.png',
+            shadowUrl: 'leaflet/images/marker-shadow.png',
+        }), 
+     L.icon({
+            iconUrl: 'leaflet/images/marker-icon.png',
+            shadowUrl: 'leaflet/images/marker-shadow.png',
+        }), 
+
+
+    ];
 
     /**
      * Start
@@ -183,7 +199,8 @@ class Init {
      * @return void
      */
     private setUserMarker = (): void => {
-        this.marker = L.marker([this.lat, this.lng]).addTo(this.map);
+        var item = this.icons[Math.floor(Math.random()*this.icons.length)];
+        this.marker = L.marker([this.lat, this.lng],{icon:item}).addTo(this.map);
     }
 
 
