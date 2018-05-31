@@ -24,6 +24,14 @@ var Warehouse = /** @class */ (function () {
             }
         });
     };
+    Warehouse.prototype.updateData = function (userData) {
+        this.users.map(function (item, key) {
+            if (userData.user_id == item.user_id) {
+                item.lat = userData.lat;
+                item.lng = userData.lng;
+            }
+        });
+    };
     return Warehouse;
 }());
 exports.Warehouse = Warehouse;

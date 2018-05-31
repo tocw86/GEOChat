@@ -31,4 +31,13 @@ export class Warehouse {
       
     }
 
+    public updateData(userData:any){
+        this.users.map(function(item,key){
+            if(userData.user_id == item.user_id){
+                item.lat = userData.lat;
+                item.lng = userData.lng;
+            }
+        });
+    }
+
 }

@@ -6,7 +6,8 @@ class Init {
     private user_id: string;
     private map: any;
     private socket: any;
-    private marker:any;
+    private marker: any;
+    private usersMarkers: Array<any> = [];
 
     /**
      * Start
@@ -70,17 +71,63 @@ class Init {
      * @return void
      */
     private triggerSocketEvents = (): void => {
+        var self = this;
 
-        this.socket.on('load_users', function (usersData: any) {
+        this.socket.on('load_users', function (usersData: string) {
             var data = JSON.parse(usersData);
+
             for (var i = 0; i < data.length; i++) {
-                L.marker([data[i].lat, data[i].lng]).addTo(this.map);
+                if (data[i].user_id != this.user_id) {
+                    var marker = L.marker([data[i].lat, data[i].lng]).addTo(self.map);
+                    self.usersMarkers.push(
+                        {
+                            user_id: data[i].user_id,
+                            marker: marker
+                        }
+                    );
+                }
+
             }
         });
 
-        this.socket.on('update_markers', function (usersData: any) {
+        
+        this.socket.on('load_user', function (usersData: string) {
             var data = JSON.parse(usersData);
-            L.marker([data.lat, data.lng]).addTo(this.map);
+
+            if (data.user_id != this.user_id) {
+                var marker = L.marker([data.lat, data.lng]).addTo(self.map);
+                self.usersMarkers.push(
+                    {
+                        user_id: data.user_id,
+                        marker: marker
+                    }
+                );
+            }
+        });
+
+
+        this.socket.on('move_marker', function (usersData: string) {
+            var data = JSON.parse(usersData);
+ 
+            for (var i = 0; i < self.usersMarkers.length; i++) {
+                if (data.user_id == self.usersMarkers[i].user_id) {
+                    self.usersMarkers[i].marker.setLatLng({
+                        lat: data.lat,
+                        lng: data.lng
+                    });
+                }
+
+            }
+
+        });
+
+        this.socket.on('remove_marker', function(user_id:string){
+            for (var i = 0; i < self.usersMarkers.length; i++) {
+                if (user_id == self.usersMarkers[i].user_id) {
+                    self.usersMarkers[i].marker.remove();
+                }
+
+            }
         });
 
     }
@@ -88,7 +135,7 @@ class Init {
     /**
      * Init map
      */
-    private initMap = ():void => {
+    private initMap = (): void => {
 
         this.map = L.map('map').setView([this.lat, this.lng], 18);
 
@@ -105,8 +152,35 @@ class Init {
      * Set user marker
      * @return void
      */
-    private setUserMarker = ():void => {
+    private setUserMarker = (): void => {
         this.marker = L.marker([this.lat, this.lng]).addTo(this.map);
+    }
+
+
+    /**
+     * Trigger map events
+     * @return void
+     */
+    private mapEvents = (): void => {
+        var self = this;
+        this.map.on('click', function (event: any) {
+            if (typeof self.marker != 'undefined') {
+                self.lat = event.latlng.lat;
+                self.lng = event.latlng.lng;
+
+                self.marker.setLatLng(event.latlng);
+
+                self.updateUserData();
+
+            }
+        });
+    }
+
+    /**
+     * Send update data to socket
+     */
+    private updateUserData = () => {
+        this.socket.emit('update_user', this.getJsonFromUser());
     }
 
     /**
@@ -118,11 +192,14 @@ class Init {
 
         this.sendUserData();
 
-        this.windowEvents();
- 
+        // this.windowEvents();
+
         this.initMap();
-       
+
         this.setUserMarker();
 
+        this.mapEvents();
+
+        this.triggerSocketEvents();
     }
 }

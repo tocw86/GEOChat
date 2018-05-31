@@ -7,6 +7,7 @@ var Init = /** @class */ (function () {
     function Init(socket) {
         var _this = this;
         this.token = 'pk.eyJ1IjoidG9jdzg2IiwiYSI6ImNqaHM0YTh2bzA3bDUzN254Mndyb2c4dm0ifQ.3eIb7F5PV-E6pBugRhs4cQ';
+        this.usersMarkers = [];
         /**
          * Set user safe data
          * @return void
@@ -39,15 +40,46 @@ var Init = /** @class */ (function () {
          * @return void
          */
         this.triggerSocketEvents = function () {
+            var self = _this;
             _this.socket.on('load_users', function (usersData) {
                 var data = JSON.parse(usersData);
                 for (var i = 0; i < data.length; i++) {
-                    L.marker([data[i].lat, data[i].lng]).addTo(this.map);
+                    if (data[i].user_id != this.user_id) {
+                        var marker = L.marker([data[i].lat, data[i].lng]).addTo(self.map);
+                        self.usersMarkers.push({
+                            user_id: data[i].user_id,
+                            marker: marker
+                        });
+                    }
                 }
             });
-            _this.socket.on('update_markers', function (usersData) {
+            _this.socket.on('load_user', function (usersData) {
                 var data = JSON.parse(usersData);
-                L.marker([data.lat, data.lng]).addTo(this.map);
+                if (data.user_id != this.user_id) {
+                    var marker = L.marker([data.lat, data.lng]).addTo(self.map);
+                    self.usersMarkers.push({
+                        user_id: data.user_id,
+                        marker: marker
+                    });
+                }
+            });
+            _this.socket.on('move_marker', function (usersData) {
+                var data = JSON.parse(usersData);
+                for (var i = 0; i < self.usersMarkers.length; i++) {
+                    if (data.user_id == self.usersMarkers[i].user_id) {
+                        self.usersMarkers[i].marker.setLatLng({
+                            lat: data.lat,
+                            lng: data.lng
+                        });
+                    }
+                }
+            });
+            _this.socket.on('remove_marker', function (user_id) {
+                for (var i = 0; i < self.usersMarkers.length; i++) {
+                    if (user_id == self.usersMarkers[i].user_id) {
+                        self.usersMarkers[i].marker.remove();
+                    }
+                }
             });
         };
         /**
@@ -70,14 +102,37 @@ var Init = /** @class */ (function () {
             _this.marker = L.marker([_this.lat, _this.lng]).addTo(_this.map);
         };
         /**
+         * Trigger map events
+         * @return void
+         */
+        this.mapEvents = function () {
+            var self = _this;
+            _this.map.on('click', function (event) {
+                if (typeof self.marker != 'undefined') {
+                    self.lat = event.latlng.lat;
+                    self.lng = event.latlng.lng;
+                    self.marker.setLatLng(event.latlng);
+                    self.updateUserData();
+                }
+            });
+        };
+        /**
+         * Send update data to socket
+         */
+        this.updateUserData = function () {
+            _this.socket.emit('update_user', _this.getJsonFromUser());
+        };
+        /**
          * Run after get geo action
          */
         this.run = function (position) {
             _this.setUserDate(position);
             _this.sendUserData();
-            _this.windowEvents();
+            // this.windowEvents();
             _this.initMap();
             _this.setUserMarker();
+            _this.mapEvents();
+            _this.triggerSocketEvents();
         };
         this.socket = socket;
         if (navigator.geolocation) {

@@ -31,41 +31,52 @@ app.get('/leaflet/images/marker-shadow.png', function (req, res) {
 });
 
 var users = new warehouse.Warehouse();
-
 // When a client connects, we note it in the console
 io.sockets.on('connection', function (socket) {
+    var id = null;
     socket.on('new_user', function (data) {
         var keys = keypair();
         var user_data = JSON.parse(data);
         var elt = new auth.Auth(keys.public, keys.private, user_data.user_id);
- 
+       
+        id = user_data.user_id;
+
         var allUsers = users.getUsers();
-        if(allUsers.length > 0){
-            socket.emit('load_users',JSON.stringify(allUsers));
+        if (allUsers.length > 0) {
+            socket.emit('load_users', JSON.stringify(allUsers));
         }
 
         users.insert({
             user_id: user_data.user_id,
             lat: user_data.lat,
-            lng:  user_data.lng,
-          }, elt.getPrivateKey(), elt.getPublicKey());
+            lng: user_data.lng,
+        }, elt.getPrivateKey(), elt.getPublicKey());
 
- 
-              socket.broadcast.emit('update_markers',JSON.stringify({
-                lat: user_data.lat,
-                lng:  user_data.lng,
-              }));
-    
-        
- 
+
+        socket.broadcast.emit('load_user', JSON.stringify({
+            user_id: user_data.user_id,
+            lat: user_data.lat,
+            lng: user_data.lng,
+        }));
+
     });
 
-    socket.on('remove_user',function(id){
-        console.log('usuwanie usera:' + id);
+
+    socket.on('update_user', function (userData) {
+        users.updateData(JSON.parse(userData));
+        socket.broadcast.emit('move_marker', userData);
+
+    });
+
+    socket.on('disconnect', function () {
+        console.log('Klient: ' + id + ' opuscił czat!');
         users.removeUser(id);
-     });
+        socket.broadcast.emit('remove_marker', id);
+    });
 
 });
+
+
 
 http.listen(3000, function () {
     console.log('listening on *:3000');
