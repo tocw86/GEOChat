@@ -8,22 +8,28 @@ class Init {
     private socket: any;
     private marker: any;
     private usersMarkers: Array<any> = [];
-    private icons:Array<any> = [
-     L.icon({
+    private icons: Array<any> = [
+        L.icon({
             iconUrl: 'leaflet/images/marker-icon-red.png',
             shadowUrl: 'leaflet/images/marker-shadow.png',
-        }), 
-     L.icon({
+        }),
+        L.icon({
             iconUrl: 'leaflet/images/marker-icon-green.png',
             shadowUrl: 'leaflet/images/marker-shadow.png',
-        }), 
-     L.icon({
+        }),
+        L.icon({
             iconUrl: 'leaflet/images/marker-icon.png',
             shadowUrl: 'leaflet/images/marker-shadow.png',
-        }), 
+        }),
 
 
     ];
+    private defaultPosition = {
+        coords: {
+            latitude: 51.1739726374,
+            longitude: -1.82237671048
+        }
+    };
 
     /**
      * Start
@@ -35,15 +41,19 @@ class Init {
         this.socket = socket;
 
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(this.run);
+            navigator.geolocation.getCurrentPosition(this.run, this.error);
         } else {
             alert("Geolocation is not supported by this browser.");
         }
     }
-
+    
+    public error = () => {
+        this.run(this.defaultPosition);
+    }
+    
     /**
- * Run after get geo action
- */
+    * Run after get geo action
+    */
     public run = (position: any) => {
 
         this.setUserDate(position)
@@ -199,8 +209,8 @@ class Init {
      * @return void
      */
     private setUserMarker = (): void => {
-        var item = this.icons[Math.floor(Math.random()*this.icons.length)];
-        this.marker = L.marker([this.lat, this.lng],{icon:item}).addTo(this.map);
+        var item = this.icons[Math.floor(Math.random() * this.icons.length)];
+        this.marker = L.marker([this.lat, this.lng], { icon: item }).addTo(this.map);
     }
 
 
