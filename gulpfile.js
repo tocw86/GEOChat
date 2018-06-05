@@ -14,7 +14,12 @@ gulp.task("scripts", function () {
         .pipe(uglify())
         .pipe(gulp.dest("dist"));
 });
+gulp.task("window", function () {
+    return gulp.src('src/window.js')
+        .pipe(uglify())
+        .pipe(gulp.dest("dist"));
+});
 
 gulp.watch('dist/init.js',['scripts'])
 
-gulp.task('default', ['ts']);
+gulp.task('default', ['ts','window']);

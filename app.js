@@ -20,6 +20,9 @@ app.get('/leaflet/leaflet.css', function (req, res) {
 app.get('/init.js', function (req, res) {
     res.sendFile(__dirname + '/dist/init.js');
 });
+app.get('/window.js', function (req, res) {
+    res.sendFile(__dirname + '/dist/window.js');
+});
 app.get('/leaflet/images/marker-icon-green.png', function (req, res) {
     res.sendFile(__dirname + '/leaflet/images/marker-icon-green.png');
 });
@@ -49,22 +52,21 @@ io.sockets.on('connection', function (socket) {
         id = user_data.user_id;
 
         var allUsers = users.getUsers();
+
         if (allUsers.length > 0) {
             socket.emit('load_users', JSON.stringify(allUsers));
         }
 
-        users.insert({
+        //user
+        var user = {
             user_id: user_data.user_id,
             lat: user_data.lat,
             lng: user_data.lng,
-        }, elt.getPrivateKey(), elt.getPublicKey());
+            markerType: user_data.markerType
+        }
 
-
-        socket.broadcast.emit('load_user', JSON.stringify({
-            user_id: user_data.user_id,
-            lat: user_data.lat,
-            lng: user_data.lng,
-        }));
+        users.insert(user, elt.getPrivateKey(), elt.getPublicKey());
+        socket.broadcast.emit('load_user', JSON.stringify(user));
 
     });
 

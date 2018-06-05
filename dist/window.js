@@ -1,0 +1,1 @@
+document.getElementById("marker-holder").addEventListener("click",function(e){if("IMG"===e.target.tagName){var t=e.target.getAttribute("data-marker");if(null!=t&&""!=t&&-1<["red","green","blue"].indexOf(t)){var n=io.connect("http://localhost:3000");new Init(n,t),document.getElementById("marker-holder").innerHTML=""}}});

@@ -8,37 +8,37 @@ class Init {
     private socket: any;
     private marker: any;
     private usersMarkers: Array<any> = [];
-    private icons: Array<any> = [
-        L.icon({
+    private icons:any = {
+       red: L.icon({
             iconUrl: 'leaflet/images/marker-icon-red.png',
             shadowUrl: 'leaflet/images/marker-shadow.png',
         }),
-        L.icon({
+       green: L.icon({
             iconUrl: 'leaflet/images/marker-icon-green.png',
             shadowUrl: 'leaflet/images/marker-shadow.png',
         }),
-        L.icon({
+       blue: L.icon({
             iconUrl: 'leaflet/images/marker-icon.png',
             shadowUrl: 'leaflet/images/marker-shadow.png',
         }),
-
-
-    ];
+    };
     private defaultPosition = {
         coords: {
             latitude: 51.1739726374,
             longitude: -1.82237671048
         }
     };
+    private markerType:string;
 
     /**
      * Start
      * 
      * @param socket Socket.io
      */
-    constructor(socket: any) {
+    constructor(socket: any, markerType:string) {
 
         this.socket = socket;
+        this.markerType = markerType;
 
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(this.run, this.error);
@@ -100,7 +100,8 @@ class Init {
         return JSON.stringify({
             lat: this.lat,
             lng: this.lng,
-            user_id: this.user_id
+            user_id: this.user_id,
+            markerType: this.markerType
         });
     }
 
@@ -126,8 +127,9 @@ class Init {
             var data = JSON.parse(usersData);
 
             for (var i = 0; i < data.length; i++) {
-                if (data[i].user_id != this.user_id) {
-                    var marker = L.marker([data[i].lat, data[i].lng]).addTo(self.map);
+                if (data[i].user_id != self.user_id) {
+                    var icon = self.icons[data[i].markerType];
+                    var marker = L.marker([data[i].lat, data[i].lng],{icon:icon}).addTo(self.map);
                     self.usersMarkers.push(
                         {
                             user_id: data[i].user_id,
@@ -145,8 +147,9 @@ class Init {
         this.socket.on('load_user', function (usersData: string) {
             var data = JSON.parse(usersData);
 
-            if (data.user_id != this.user_id) {
-                var marker = L.marker([data.lat, data.lng]).addTo(self.map);
+            if (data.user_id != self.user_id) {
+                var icon = self.icons[data.markerType];
+                var marker = L.marker([data.lat, data.lng],{icon:icon}).addTo(self.map);
                 self.usersMarkers.push(
                     {
                         user_id: data.user_id,
@@ -209,7 +212,7 @@ class Init {
      * @return void
      */
     private setUserMarker = (): void => {
-        var item = this.icons[Math.floor(Math.random() * this.icons.length)];
+        var item = this.icons[this.markerType];
         this.marker = L.marker([this.lat, this.lng], { icon: item }).addTo(this.map);
     }
 
