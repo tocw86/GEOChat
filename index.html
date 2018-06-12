@@ -11,34 +11,31 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title></title>
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="stylesheet" href="leaflet/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
     <script src="leaflet/leaflet.js"></script>
-  
-    <style>
-        #map {
-            height: 400px;
-            width: 100%
-        }
-        img {
-            cursor: pointer;
-        }
-    </style>
+
 </head>
 
 <body>
-    <div id="map"></div>
-    <div style="width: 100%;height: 180px;background-color: gray">
-    
-        <div id="marker-holder">
-                Wybierz kolor swojego markera:
-            <img src="/leaflet/images/marker-icon.png" data-marker="blue" alt="marker blue">
-            <img src="/leaflet/images/marker-icon-red.png" data-marker="red" alt="marker red">
-            <img src="/leaflet/images/marker-icon-green.png" data-marker="green" alt="marker green">
+
+            <div id="map" class="bg"></div>
+
+        <div id="bottom_div">
+            <div>
+                <div id="marker-holder">
+                    Wybierz kolor swojego markera:
+                    <img src="/leaflet/images/marker-icon.png" data-marker="blue" alt="marker blue">
+                    <img src="/leaflet/images/marker-icon-red.png" data-marker="red" alt="marker red">
+                    <img src="/leaflet/images/marker-icon-green.png" data-marker="green" alt="marker green">
+                </div>
+            </div>
+
         </div>
 
 
-    </div>
+
     <script src="init.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="window.js"></script>

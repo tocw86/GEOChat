@@ -8,7 +8,9 @@
             if (attr != null && attr != '' && ['red','green','blue'].indexOf(attr) > -1) {
                 var socket = $io.connect('http://localhost:3000');
                 var user = new Init(socket, attr);
-                document.getElementById('marker-holder').innerHTML = '';
+                document.getElementById('bottom_div').innerHTML = '';
+                document.getElementById('bottom_div').classList.add('hide');
+                document.getElementById('map').classList.remove('bg');
             }
         }
     });

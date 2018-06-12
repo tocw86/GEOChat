@@ -17,6 +17,14 @@ app.get('/leaflet/leaflet.js', function (req, res) {
 app.get('/leaflet/leaflet.css', function (req, res) {
     res.sendFile(__dirname + '/leaflet/leaflet.css');
 });
+
+app.get('/style.css', function (req, res) {
+    res.sendFile(__dirname + '/assets/css/style.css');
+});
+app.get('/bg.jpg', function (req, res) {
+    res.sendFile(__dirname + '/assets/img/bg.jpg');
+});
+
 app.get('/init.js', function (req, res) {
     res.sendFile(__dirname + '/dist/init.js');
 });

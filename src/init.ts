@@ -82,6 +82,8 @@ class Init {
         window.addEventListener('beforeunload', function (e) {
             //self.socket.emit('remove_user', self.user_id);
         });
+
+        document.getElementById('#map')
     }
 
     /**
@@ -239,8 +241,8 @@ class Init {
         this.map = L.map('map').setView([this.lat, this.lng], 14);
 
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + this.token, {
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            maxZoom: 18,
+            attribution: '',
+            maxZoom: 16,
             id: 'mapbox.streets-satellite',
             accessToken: this.token
         }).addTo(this.map);
