@@ -10,16 +10,16 @@ class Init {
     private usersMarkers: Array<any> = [];
     private icons: any = {
         red: L.icon({
-            iconUrl: 'leaflet/images/marker-icon-red.png',
-            shadowUrl: 'leaflet/images/marker-shadow.png',
+            iconUrl: 'marker-icon-red.png',
+            shadowUrl: 'marker-shadow.png',
         }),
         green: L.icon({
-            iconUrl: 'leaflet/images/marker-icon-green.png',
-            shadowUrl: 'leaflet/images/marker-shadow.png',
+            iconUrl: 'marker-icon-green.png',
+            shadowUrl: 'marker-shadow.png',
         }),
         blue: L.icon({
-            iconUrl: 'leaflet/images/marker-icon.png',
-            shadowUrl: 'leaflet/images/marker-shadow.png',
+            iconUrl: 'marker-icon.png',
+            shadowUrl: 'marker-shadow.png',
         }),
     };
     private defaultPosition = {

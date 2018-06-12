@@ -11,11 +11,11 @@ io.set('origins', 'http://localhost:3000');
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
-app.get('/leaflet/leaflet.js', function (req, res) {
-    res.sendFile(__dirname + '/leaflet/leaflet.js');
+app.get('/leaflet.js', function (req, res) {
+    res.sendFile(__dirname + '/lib/leaflet/leaflet.js');
 });
-app.get('/leaflet/leaflet.css', function (req, res) {
-    res.sendFile(__dirname + '/leaflet/leaflet.css');
+app.get('/leaflet.css', function (req, res) {
+    res.sendFile(__dirname + '/lib/leaflet/leaflet.css');
 });
 
 app.get('/style.css', function (req, res) {
@@ -31,20 +31,26 @@ app.get('/init.js', function (req, res) {
 app.get('/window.js', function (req, res) {
     res.sendFile(__dirname + '/dist/window.js');
 });
-app.get('/leaflet/images/marker-icon-green.png', function (req, res) {
-    res.sendFile(__dirname + '/leaflet/images/marker-icon-green.png');
+app.get('/marker-icon-green.png', function (req, res) {
+    res.sendFile(__dirname + '/lib/leaflet/images/marker-icon-green.png');
 });
-app.get('/leaflet/images/marker-icon-red.png', function (req, res) {
-    res.sendFile(__dirname + '/leaflet/images/marker-icon-red.png');
+app.get('/marker-icon-red.png', function (req, res) {
+    res.sendFile(__dirname + '/lib/leaflet/images/marker-icon-red.png');
 });
-app.get('/leaflet/images/marker-icon.png', function (req, res) {
-    res.sendFile(__dirname + '/leaflet/images/marker-icon.png');
+app.get('/marker-icon.png', function (req, res) {
+    res.sendFile(__dirname + '/lib/leaflet/images/marker-icon.png');
 });
-app.get('/leaflet/images/marker-icon-2x.png', function (req, res) {
-    res.sendFile(__dirname + '/leaflet/images/marker-icon-2x.png');
+app.get('/marker-icon-2x.png', function (req, res) {
+    res.sendFile(__dirname + '/lib/leaflet/images/marker-icon-2x.png');
 });
-app.get('/leaflet/images/marker-shadow.png', function (req, res) {
-    res.sendFile(__dirname + '/leaflet/images/marker-shadow.png');
+app.get('/marker-shadow.png', function (req, res) {
+    res.sendFile(__dirname + '/lib/leaflet/images/marker-shadow.png');
+});
+app.get('/vanilla-notify.css', function (req, res) {
+    res.sendFile(__dirname + '/lib/notify/vanilla-notify.css');
+});
+app.get('/vanilla-notify.js', function (req, res) {
+    res.sendFile(__dirname + '/lib/notify/vanilla-notify.js');
 });
 
 var users = new warehouse.Warehouse();
@@ -76,6 +82,7 @@ io.sockets.on('connection', function (socket) {
         users.insert(user, elt.getPrivateKey(), elt.getPublicKey());
         socket.broadcast.emit('load_user', JSON.stringify(user));
 
+        socket.emit('console',true);
     });
 
 
@@ -97,7 +104,7 @@ io.sockets.on('connection', function (socket) {
                 console.log('Disconnected: ' + id);
                 users.removeUser(id);
                 socket.broadcast.emit('remove_marker', id);
-  
+                socket.emit('console',false);
 
         }, 500);
 
