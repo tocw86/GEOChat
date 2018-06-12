@@ -5,6 +5,7 @@
         "src/auth.ts",
         "src/warehouse.ts",
         "src/init.ts",
+        "src/earth.ts",
     ],
     "compilerOptions": {
         "noImplicitAny": true,

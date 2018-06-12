@@ -1,4 +1,6 @@
-class Init {
+import {Earth} from './earth';
+declare var L: any;
+export class Init {
 
     private token: string = 'pk.eyJ1IjoidG9jdzg2IiwiYSI6ImNqaHM0YTh2bzA3bDUzN254Mndyb2c4dm0ifQ.3eIb7F5PV-E6pBugRhs4cQ';
     private lat: number;
@@ -142,10 +144,10 @@ class Init {
      */
     private markerFactory = (lat:number, lng:number, user_id:string, markerType:string):any => {
         var icon = this.icons[markerType];
-        var marker = L.marker([lat, lng], { icon: icon }).addTo(this.map).on('click',function(event){
+        var marker = L.marker([lat, lng], { icon: icon }).addTo(this.map).on('click',function(event:any){
             console.log(this.getLatLng());
         });
-        marker.bindPopup('<p>' + user_id + '<br/><button id="'+user_id+'">Handshake</button></p>').openPopup();
+        marker.bindPopup('<p>' + user_id + '<br/><button id="'+user_id+'">Handshake</button></p>');
  
              document.getElementById(user_id).addEventListener('click', function(e){
                  console.log(user_id);
