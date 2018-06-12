@@ -14,31 +14,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="stylesheet" href="leaflet.css" />
     <link rel="stylesheet" href="style.css" />
-   <link rel="stylesheet" href="vanilla-notify.css"/>
- 
+    <link rel="stylesheet" href="vanilla-notify.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.metroui.org.ua/v4/css/metro-all.min.css">
 
 </head>
 
 <body>
 
-            <div id="map" class="bg"></div>
+    <div id="map" class="bg"></div>
 
-        <div id="bottom_div">
-            <div>
-                <div id="marker-holder">
-                    Wybierz kolor swojego markera:
-                    <img src="/marker-icon.png" data-marker="blue" alt="marker blue">
-                    <img src="/marker-icon-red.png" data-marker="red" alt="marker red">
-                    <img src="/marker-icon-green.png" data-marker="green" alt="marker green">
+    <div id="bottom_div" class="show">
+        <div id="chevron_pull">
+            <i class="fas fa-angle-up"></i>
+        </div>
+
+        <div>
+            <div class="container">
+                <div class="grid">
+                   
+                    <div class="row flex-align-center">
+                        <div class="cell-6">
+                           <p class="text-leader">Aby rozpocząć wybierz swój marker:</p>
+                           <br>
+                            <div class="row" id="marker-holder">
+                                    <div class="cell">
+                                            <button class="shortcut primary outline" data-marker="blue">
+                                                <span class="fas fa-3x fa-map-marker-alt"></span>
+                                            </button>
+                                        </div>
+                                        <div class="cell">
+                                            <button class="shortcut success outline" data-marker="green">
+                                                <span class="fas fa-3x fa-map-marker-alt"></span>
+                                            </button>
+                                        </div>
+                                        <div class="cell">
+                                            <button class="shortcut alert  outline"  data-marker="red">
+                                                <span class="fas fa-3x fa-map-marker-alt"></span>
+                                            </button>
+                                        </div>
+                            </div>
+                           
+                           
+                        </div>
+
+                    <div class="cell-6">
+
+                        <h1>GeoChat</h1>
+                    </div>
                 </div>
             </div>
 
         </div>
-        <script src="vanilla-notify.js"></script>
- <script src="leaflet.js"></script>
+
+
+
+    </div>
+
+    <script src="vanilla-notify.js"></script>
+    <script src="leaflet.js"></script>
     <script src="init.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="window.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdn.metroui.org.ua/v4/js/metro.min.js"></script>
 </body>
 
 </html>

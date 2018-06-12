@@ -21,6 +21,10 @@ app.get('/leaflet.css', function (req, res) {
 app.get('/style.css', function (req, res) {
     res.sendFile(__dirname + '/assets/css/style.css');
 });
+
+app.get('/fontawesome-all.css', function (req, res) {
+    res.sendFile(__dirname + '/lib/fontawesome/fontawesome-all.css');
+});
 app.get('/bg.jpg', function (req, res) {
     res.sendFile(__dirname + '/assets/img/bg.jpg');
 });
