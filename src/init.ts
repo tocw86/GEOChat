@@ -1,6 +1,4 @@
-import {Earth} from './earth';
-declare var L: any;
-export class Init {
+class Init {
 
     private token: string = 'pk.eyJ1IjoidG9jdzg2IiwiYSI6ImNqaHM0YTh2bzA3bDUzN254Mndyb2c4dm0ifQ.3eIb7F5PV-E6pBugRhs4cQ';
     private lat: number;
@@ -85,7 +83,7 @@ export class Init {
             //self.socket.emit('remove_user', self.user_id);
         });
 
-        document.getElementById('#map')
+ 
     }
 
     /**
@@ -149,9 +147,9 @@ export class Init {
         });
         marker.bindPopup('<p>' + user_id + '<br/><button id="'+user_id+'">Handshake</button></p>');
  
-             document.getElementById(user_id).addEventListener('click', function(e){
-                 console.log(user_id);
-             });
+            //  document.getElementById(user_id).addEventListener('click', function(e){
+            //      console.log(user_id);
+            //  });
  
 
         return marker;

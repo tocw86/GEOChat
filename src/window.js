@@ -1,7 +1,7 @@
 ;
 (function () {
-    var $io = exports.io;
-    exports.io = null;
+    var $io = io;
+    io = null;
     document.getElementById('marker-holder').addEventListener('click', function (e) {
         if (e.target.tagName === 'IMG') {
             var attr = e.target.getAttribute('data-marker');
