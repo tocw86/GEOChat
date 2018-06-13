@@ -13,7 +13,7 @@ export class Warehouse {
         this.keys.push({
             user_id: user.user_id,
             privateKey: privateKey,
-            publicKey: publicKey
+            publicKey: publicKey,
         });
     }
 
@@ -47,6 +47,35 @@ export class Warehouse {
             return false;
         }
         return true;
+    }
+
+    public checkAvaible(user_id:string) : boolean{
+        var flag = false;
+        this.users.map(function(item,key){
+            if(user_id == item.user_id && item.enabled){
+                flag = true;
+                return true;
+            }
+        });
+        return flag;
+    }
+    public hide(user_id:string){
+        var flag = false;
+        this.users.map(function(item,key){
+            if(user_id == item.user_id){
+                item.enabled = false;
+            }
+        });
+        return flag;
+    }
+    public show(user_id:string){
+        var flag = false;
+        this.users.map(function(item,key){
+            if(user_id == item.user_id){
+                item.enabled = true;
+            }
+        });
+        return flag;
     }
 
 }

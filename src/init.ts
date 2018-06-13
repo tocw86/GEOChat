@@ -1,5 +1,6 @@
+declare var vNotify: any;
 class Init {
-    private moving:boolean = true;
+    private moving: boolean = true;
     private token: string = 'pk.eyJ1IjoidG9jdzg2IiwiYSI6ImNqaHM0YTh2bzA3bDUzN254Mndyb2c4dm0ifQ.3eIb7F5PV-E6pBugRhs4cQ';
     private lat: number;
     private lng: number;
@@ -32,6 +33,9 @@ class Init {
     };
     private markerType: string;
     private enabled: boolean = true;
+    private sender_line: L.Polyline<GeoJSON.LineString | GeoJSON.MultiLineString, any>;
+    private receiver_line: L.Polyline<GeoJSON.LineString | GeoJSON.MultiLineString, any>;
+
 
     /**
      * Start
@@ -113,6 +117,7 @@ class Init {
         this.lat = position.coords.latitude;
         this.lng = position.coords.longitude;
         this.user_id = this.socket.id;
+        this.enabled = true;
     }
 
     /**
@@ -124,7 +129,8 @@ class Init {
             lat: this.lat,
             lng: this.lng,
             user_id: this.user_id,
-            markerType: this.markerType
+            markerType: this.markerType,
+            enabled: this.enabled
         });
     }
 
@@ -177,18 +183,25 @@ class Init {
         var friend_position = $this.getLatLng();
         var my_position = this.marker.getLatLng();
 
-        var line = L.polyline([[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]], {
+
+        this.sender_line = L.polyline([[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]], {
             color: 'red',
-            opacity: 0.6,
+            opacity: 1,
             weight: 2
         }).addTo(this.map);
 
         //comunicate to friend
-        this.socket.emit('start_connect', JSON.stringify({ to: user_id, from: this.user_id }));
+        this.socket.emit('start_connect', JSON.stringify({ to: user_id, from: this.user_id, gps: [[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]] }));
 
     }
 
-
+    private notify(type: string, text: string, title: string) {
+        vNotify[type]({
+            text: text,
+            title: title,
+            sticky: true
+        });
+    }
     /**
      * Trigger all socket events
      * @return void
@@ -196,22 +209,44 @@ class Init {
     private triggerSocketEvents = (): void => {
         var self = this;
 
+        this.socket.on('make_line', function () {
+            self.notify('info', 'Private Room', 'Connected to user');
+            self.sender_line.setStyle({
+                color: 'green'
+            });
+        });
+        this.socket.on('remove_line', function () {
+            self.notify('error', 'Private Room', 'Friend refuse invitation');
+            self.map.removeLayer(self.sender_line);
+            self.enabled = true;
+            self.moving = true;
+        });
 
         this.socket.on('handshake', function (data: string) {
             var connection_data = JSON.parse(data);
-            if (connection_data.to == self.user_id) {
+            if (connection_data.to == self.user_id && self.moving) {
                 self.moving = false;
 
                 if (confirm('Handshake from:' + connection_data.from)) {
-                   self.enabled = false;
-                   this.socket.emit('handshake_success',data)
+                    self.enabled = false;
+                    self.socket.emit('handshake_success', data)
+
+                    this.receiver_line = L.polyline(connection_data.gps, {
+                        color: 'green',
+                        opacity: 1,
+                        weight: 2
+                    }).addTo(self.map);
+
+                    self.notify('info', 'Private Room', 'Connected to user');
+
                     return true;
                 } else {
                     self.moving = true;
                     self.enabled = true;
-                    this.socket.emit('handshake_failed',data)
-                   return false;
-                } 
+                    self.socket.emit('handshake_failed', data);
+                    self.notify('error', 'Private Room', 'Refused invitation');
+                    return false;
+                }
             }
 
         });
@@ -228,7 +263,8 @@ class Init {
                     self.usersMarkers.push(
                         {
                             user_id: data[i].user_id,
-                            marker: marker
+                            marker: marker,
+                            enabled: data[i].enabled
                         }
                     );
                 }
@@ -249,7 +285,8 @@ class Init {
                 self.usersMarkers.push(
                     {
                         user_id: data.user_id,
-                        marker: marker
+                        marker: marker,
+                        enabled: data.enabled
                     }
                 );
             }

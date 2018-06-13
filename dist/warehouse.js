@@ -10,7 +10,7 @@ var Warehouse = /** @class */ (function () {
         this.keys.push({
             user_id: user.user_id,
             privateKey: privateKey,
-            publicKey: publicKey
+            publicKey: publicKey,
         });
     };
     Warehouse.prototype.getUsers = function () {
@@ -40,6 +40,34 @@ var Warehouse = /** @class */ (function () {
             return false;
         }
         return true;
+    };
+    Warehouse.prototype.checkAvaible = function (user_id) {
+        var flag = false;
+        this.users.map(function (item, key) {
+            if (user_id == item.user_id && item.enabled) {
+                flag = true;
+                return true;
+            }
+        });
+        return flag;
+    };
+    Warehouse.prototype.hide = function (user_id) {
+        var flag = false;
+        this.users.map(function (item, key) {
+            if (user_id == item.user_id) {
+                item.enabled = false;
+            }
+        });
+        return flag;
+    };
+    Warehouse.prototype.show = function (user_id) {
+        var flag = false;
+        this.users.map(function (item, key) {
+            if (user_id == item.user_id) {
+                item.enabled = true;
+            }
+        });
+        return flag;
     };
     return Warehouse;
 }());

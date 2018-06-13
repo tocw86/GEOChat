@@ -80,62 +80,69 @@ io.sockets.on('connection', function (socket) {
             user_id: user_data.user_id,
             lat: user_data.lat,
             lng: user_data.lng,
-            markerType: user_data.markerType
+            markerType: user_data.markerType,
+            enabled: true
         }
 
         users.insert(user, elt.getPrivateKey(), elt.getPublicKey());
         socket.broadcast.emit('load_user', JSON.stringify(user));
 
-        socket.emit('console',id);
+        socket.emit('console', id);
     });
 
-    socket.on('start_connect',function(data){
-            if(users.isJson(data)){
-                var header = JSON.parse(data);
-                if(header.hasOwnProperty('to') && header.hasOwnProperty('from')){
-                    socket.to(header.to).emit('handshake',data);
-                }
-               
+    socket.on('start_connect', function (data) {
+        if (users.isJson(data)) {
+            var header = JSON.parse(data);
+            if (header.hasOwnProperty('to') && header.hasOwnProperty('from') && users.checkAvaible(header.to)) {
+                socket.to(header.to).emit('handshake', data);
             }
-              
-    });
-    socket.on('handshake_success',function(data){
-       
-           
-        console.log(data);
-    });
-    socket.on('handshake_failed',function(data){
-        var users = JSON.parse(data);
-        console.log('Klient: ' + users.from + ' opuscił czat!');
-        users.removeUser(users.from);
-        socket.broadcast.emit('remove_marker', users.from);
-    });
 
-
-    socket.on('update_user', function (userData) {
-        users.updateData(JSON.parse(userData));
-        socket.broadcast.emit('move_marker', userData);
+        }
 
     });
-    socket.on('remove_user', function (userId) {
-        console.log('Klient: ' + userId + ' opuscił czat!');
-        users.removeUser(userId);
-        socket.broadcast.emit('remove_marker', userId);
-     });
-
-    socket.on('disconnect', function () {
-
-        setTimeout(function () {
- 
-                console.log('Disconnected: ' + id);
-                users.removeUser(id);
-                socket.broadcast.emit('remove_marker', id);
-                socket.emit('console',false);
-
-        }, 500);
-
+    socket.on('handshake_success', function (data) {
+        if (users.isJson(data)) {
+            var connection_data = JSON.parse(data);
+            users.hide(connection_data.to);
+            users.hide(connection_data.from);
+            socket.to(connection_data.from).emit('make_line');
+        }
+    });
+    socket.on('handshake_failed', function (data) {
+            if (users.isJson(data)) {
+                var connection_data = JSON.parse(data);
+                users.show(connection_data.to);
+                users.show(connection_data.from);
+                socket.to(connection_data.from).emit('remove_line');
+            }
+    
 
     });
+
+
+socket.on('update_user', function (userData) {
+    users.updateData(JSON.parse(userData));
+    socket.broadcast.emit('move_marker', userData);
+
+}); socket.on('remove_user', function (userId) {
+    console.log('Klient: ' + userId + ' opuscił czat!');
+    users.removeUser(userId);
+    socket.broadcast.emit('remove_marker', userId);
+});
+
+socket.on('disconnect', function () {
+
+    setTimeout(function () {
+
+        console.log('Disconnected: ' + id);
+        users.removeUser(id);
+        socket.broadcast.emit('remove_marker', id);
+        socket.emit('console', false);
+
+    }, 500);
+
+
+});
 
 });
 
