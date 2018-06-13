@@ -90,6 +90,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('start_connect',function(data){
+       
             socket.broadcast.emit('handshake',data);   
     });
 
