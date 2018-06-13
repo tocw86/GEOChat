@@ -31,6 +31,7 @@ class Init {
         }
     };
     private markerType: string;
+    private enabled: boolean = true;
 
     /**
      * Start
@@ -111,7 +112,7 @@ class Init {
     private setUserDate = (position: any): void => {
         this.lat = position.coords.latitude;
         this.lng = position.coords.longitude;
-        this.user_id = this.randomString(32);
+        this.user_id = this.socket.id;
     }
 
     /**
@@ -200,7 +201,17 @@ class Init {
             var connection_data = JSON.parse(data);
             if (connection_data.to == self.user_id) {
                 self.moving = false;
-                alert('Handshake from:' + connection_data.from);
+
+                if (confirm('Handshake from:' + connection_data.from)) {
+                   self.enabled = false;
+                   this.socket.emit('handshake_success',data)
+                    return true;
+                } else {
+                    self.moving = true;
+                    self.enabled = true;
+                    this.socket.emit('handshake_failed',data)
+                   return false;
+                } 
             }
 
         });

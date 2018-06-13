@@ -90,9 +90,27 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('start_connect',function(data){
-       
-            socket.broadcast.emit('handshake',data);   
+            if(users.isJson(data)){
+                var header = JSON.parse(data);
+                if(header.hasOwnProperty('to') && header.hasOwnProperty('from')){
+                    socket.to(header.to).emit('handshake',data);
+                }
+               
+            }
+              
     });
+    socket.on('handshake_success',function(data){
+       
+           
+        console.log(data);
+    });
+    socket.on('handshake_failed',function(data){
+        var users = JSON.parse(data);
+        console.log('Klient: ' + users.from + ' opuscił czat!');
+        users.removeUser(users.from);
+        socket.broadcast.emit('remove_marker', users.from);
+    });
+
 
     socket.on('update_user', function (userData) {
         users.updateData(JSON.parse(userData));

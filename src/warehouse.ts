@@ -40,4 +40,13 @@ export class Warehouse {
         });
     }
 
+    public isJson(json:string):boolean{
+        try{
+            var obj = JSON.parse(json);
+        }catch{
+            return false;
+        }
+        return true;
+    }
+
 }

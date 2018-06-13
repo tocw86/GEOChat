@@ -32,6 +32,15 @@ var Warehouse = /** @class */ (function () {
             }
         });
     };
+    Warehouse.prototype.isJson = function (json) {
+        try {
+            var obj = JSON.parse(json);
+        }
+        catch (_a) {
+            return false;
+        }
+        return true;
+    };
     return Warehouse;
 }());
 exports.Warehouse = Warehouse;
