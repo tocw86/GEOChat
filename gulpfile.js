@@ -42,6 +42,7 @@ gulp.task("window", function () {
 });
 
 gulp.task('watch', function () { 
+    gulp.watch('src/*.ts',['ts'])
     gulp.watch('dist/init.js',['scripts'])
     gulp.watch('src/window.js',['scripts'])
     gulp.watch('assets/sass/style.scss', ['sass']);

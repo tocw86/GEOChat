@@ -1,5 +1,5 @@
 class Init {
-
+    private moving:boolean = true;
     private token: string = 'pk.eyJ1IjoidG9jdzg2IiwiYSI6ImNqaHM0YTh2bzA3bDUzN254Mndyb2c4dm0ifQ.3eIb7F5PV-E6pBugRhs4cQ';
     private lat: number;
     private lng: number;
@@ -83,9 +83,9 @@ class Init {
             //self.socket.emit('remove_user', self.user_id);
         });
 
-        
 
- 
+
+
     }
 
     /**
@@ -142,20 +142,51 @@ class Init {
      * @param user_id 
      * @returns marker
      */
-    private markerFactory = (lat:number, lng:number, user_id:string, markerType:string):any => {
+
+    private markerFactory = (lat: number, lng: number, user_id: string, markerType: string): any => {
+        var self = this;
         var icon = this.icons[markerType];
-        var marker = L.marker([lat, lng], { icon: icon }).addTo(this.map).on('click',function(event:any){
-            console.log(this.getLatLng());
+        var marker = L.marker([lat, lng], { icon: icon }).addTo(this.map).on('click', function (event: any) {
+
+            var $this = this;
+            setTimeout(function () {
+                document.getElementById(user_id).addEventListener('click', function (e) {
+                    self.startHandshake(user_id, $this);
+                });
+            }, 50);
         });
-        marker.bindPopup('<p>' + user_id + '<br/><button id="'+user_id+'">Handshake</button></p>');
- 
-            //  document.getElementById(user_id).addEventListener('click', function(e){
-            //      console.log(user_id);
-            //  });
- 
+        marker.bindPopup('<p>' + user_id + '<br/><button id="' + user_id + '">Handshake</button></p>');
 
         return marker;
+    };
+
+
+    /**
+     * Begin handshake
+     * 
+     * @param  {string} user_id
+     * @param  {any} $this
+     * @returns void
+     */
+    private startHandshake = (user_id: string, $this: any): void => {
+
+        //block moving
+        this.moving = false;
+
+        var friend_position = $this.getLatLng();
+        var my_position = this.marker.getLatLng();
+
+        var line = L.polyline([[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]], {
+            color: 'red',
+            opacity: 0.6,
+            weight: 2
+        }).addTo(this.map);
+
+        //comunicate to friend
+        this.socket.emit('start_connect', JSON.stringify({ to: user_id, from: this.user_id }));
+
     }
+
 
     /**
      * Trigger all socket events
@@ -163,6 +194,16 @@ class Init {
      */
     private triggerSocketEvents = (): void => {
         var self = this;
+
+
+        this.socket.on('handshake', function (data: string) {
+            var connection_data = JSON.parse(data);
+            if (connection_data.to == self.user_id) {
+                self.moving = false;
+                alert('Handshake from:' + connection_data.from);
+            }
+
+        });
 
         /**
          * Load all users
@@ -172,7 +213,7 @@ class Init {
 
             for (var i = 0; i < data.length; i++) {
                 if (data[i].user_id != self.user_id) {
-                    var marker = self.markerFactory(data[i].lat,data[i].lng,data[i].user_id,data[i].markerType);
+                    var marker = self.markerFactory(data[i].lat, data[i].lng, data[i].user_id, data[i].markerType);
                     self.usersMarkers.push(
                         {
                             user_id: data[i].user_id,
@@ -191,8 +232,8 @@ class Init {
             var data = JSON.parse(usersData);
 
             if (data.user_id != self.user_id) {
-               
-                var marker = self.markerFactory(data.lat,data.lng,data.user_id,data.markerType);
+
+                var marker = self.markerFactory(data.lat, data.lng, data.user_id, data.markerType);
 
                 self.usersMarkers.push(
                     {
@@ -269,7 +310,7 @@ class Init {
         var self = this;
         this.map.on('click', function (event: any) {
 
-            if (typeof self.marker != 'undefined') {
+            if (typeof self.marker != 'undefined' && self.moving) {
                 self.lat = event.latlng.lat;
                 self.lng = event.latlng.lng;
 

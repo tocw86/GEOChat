@@ -89,6 +89,9 @@ io.sockets.on('connection', function (socket) {
         socket.emit('console',id);
     });
 
+    socket.on('start_connect',function(data){
+            socket.broadcast.emit('handshake',data);   
+    });
 
     socket.on('update_user', function (userData) {
         users.updateData(JSON.parse(userData));
