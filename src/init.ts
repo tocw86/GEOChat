@@ -83,6 +83,8 @@ class Init {
             //self.socket.emit('remove_user', self.user_id);
         });
 
+        
+
  
     }
 

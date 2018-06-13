@@ -31,7 +31,7 @@ gulp.task("ts", function () {
         .pipe(gulp.dest("dist"));
 });
 gulp.task("scripts", function () {
-    return gulp.src('dist/init.js')
+    return gulp.src(['dist/init.js','src/window.js'])
         .pipe(uglify())
         .pipe(gulp.dest("dist"));
 });
@@ -43,6 +43,7 @@ gulp.task("window", function () {
 
 gulp.task('watch', function () { 
     gulp.watch('dist/init.js',['scripts'])
+    gulp.watch('src/window.js',['scripts'])
     gulp.watch('assets/sass/style.scss', ['sass']);
  });
 
