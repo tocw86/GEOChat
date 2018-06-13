@@ -23,20 +23,23 @@
 
 <body>
 
+
     <div id="map" class="bg"></div>
+    
+    <div id="c_center" class="c-center">
+        <h1>GeoChat</h1>
+    </div>
 
-    <div id="bottom_div" class="show">
-        <div id="chevron_pull">
-            <i class="fas fa-angle-down"></i>
-        </div>
-
-        <div>
+    <div id="chevron_pull" class="down">
+        <i class="fas fa-angle-up"></i>
+    </div>
+    <div id="bottom_div" class="hide d-n">
             <div class="container">
                 <div class="grid">
 
                     <div class="row flex-align-center">
-                        <div class="cell-md-6" id="m_comtainer">
-                            <p class="text-leader">Aby rozpocząć wybierz swój marker:</p>
+                        <div class="cell-md-6" id="m_container">
+                            <p class="text-leader">To start, choose your marker:</p>
                             <br>
                             <div class="row" id="marker-holder">
 
@@ -64,11 +67,13 @@
 
                         <div class="cell-md-6">
 
-                            <h1>GeoChat</h1>
+                            <h2>GeoChat</h2>
+                            <p class="text-leader">An anonymous communicator based on geolocation <br>
+                            </p>
 
-                            <div id="bottom_loader" class="d-b" data-role="activity" data-type="simple" data-style="dark"></div>
+                            <div id="bottom_loader" class="d-b" data-role="activity" data-type="simple" data-style="dark">Waiting...</div>
                             <div id="status_toolbar" class="d-n">
-                                <i class="t-s fas fa-check success"></i>&nbsp;Połączono
+                                <i class="t-s fas fa-check success"></i>&nbsp;connected
                             </div>
 
                         </div>
@@ -76,11 +81,6 @@
                 </div>
 
             </div>
-
-
-
-        </div>
-
         <script src="vanilla-notify.js"></script>
         <script src="leaflet.js"></script>
         <script src="init.js"></script>

@@ -86,7 +86,7 @@ io.sockets.on('connection', function (socket) {
         users.insert(user, elt.getPrivateKey(), elt.getPublicKey());
         socket.broadcast.emit('load_user', JSON.stringify(user));
 
-        socket.emit('console',true);
+        socket.emit('console',id);
     });
 
 

@@ -16,8 +16,8 @@
             var attr = e.target.getAttribute('data-marker');
             if (attr != null && attr != '' && ['red', 'green', 'blue'].indexOf(attr) > -1) {
                 var socket = $io.connect('http://localhost:3000');
-                socket.on('console', function (bool) {
-                    if (bool){
+                socket.on('console', function (id) {
+                    if (id){
                        var bl = document.getElementById('bottom_loader');
                        bl.classList.remove('d-b');
                         bl.classList.add('d-n');
@@ -25,9 +25,29 @@
                         var st = document.getElementById('status_toolbar');
                         st.classList.remove('d-n');
                         st.classList.add('d-b');
-                        console('success', 'Połączono', 'Status');
+
+                        var cp = document.getElementById('chevron_pull');
+                        cp.classList.remove('up');
+                        cp.classList.add('down');
+
+                        cp.innerHTML = '';
+                        var i = document.createElement('i');
+             
+                        i.setAttribute('class','fas fa-angle-up');
+                        cp.appendChild(i);
+
+                        document.getElementById('c_center').classList.add('d-n');
+
+                        document.getElementById('m_container').innerHTML = '';
+                        var ta = document.createElement('div');
+                        ta.innerHTML = '<textarea data-role="textarea" data-auto-size="true" data-max-height="400" data-prepend="<span class=\'mif-bubbles\'></span>">Hello: '+id+'</textarea>';
+        
+                        document.getElementById('m_container').appendChild(ta);
+
+                       
+                        console('success', 'Connected', 'Status');
                     }else{
-                        console('error', 'Rozłączono', 'Status');
+                        console('error', 'Disconnected', 'Status');
                     }
                        
                     
@@ -35,9 +55,10 @@
 
                 });
                 new Init(socket, attr);
-                document.getElementById('m_comtainer').innerHTML = '';
-                document.getElementById('bottom_div').classList.remove('show');
-                document.getElementById('bottom_div').classList.add('hide');
+              
+
+                document.getElementById('bottom_div').classList.remove('d-b');
+                document.getElementById('bottom_div').classList.add('d-n');
                 document.getElementById('map').classList.remove('bg');
                 socket = null;
             }
@@ -54,14 +75,24 @@
             i.setAttribute('class','fas fa-angle-up');
             this.appendChild(i);
             bottom_div.classList.remove('show');
+            bottom_div.classList.remove('d-b');
             bottom_div.classList.add('hide');
+            bottom_div.classList.add('d-n');
+
+            this.classList.remove('up');
+            this.classList.add('down');
         } else {
             this.innerHTML = '';
             var i = document.createElement('i');
             i.setAttribute('class','fas fa-angle-down');
             this.appendChild(i);
             bottom_div.classList.remove('hide');
+            bottom_div.classList.remove('d-n');
             bottom_div.classList.add('show');
+            bottom_div.classList.add('d-b');
+
+            this.classList.remove('down');
+            this.classList.add('up');
         }
     });
 
