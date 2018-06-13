@@ -2,7 +2,16 @@ $opacity:0.7;
 $sepia: rgba(255, 255, 255, $opacity);
 $sepiaHex:#ffffff;
 $success:#60a917;
-
+#bottom_loader{
+    top:4vh;
+margin: 0 auto;
+}
+.shortcut{
+    @media screen and(max-width:500px) {
+        width:4rem !important;
+        height:4rem !important;
+    }
+}
 .c-center{
     position: absolute;
     top: 15vh;

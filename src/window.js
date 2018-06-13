@@ -40,7 +40,7 @@
 
                         document.getElementById('m_container').innerHTML = '';
                         var ta = document.createElement('div');
-                        ta.innerHTML = '<textarea data-role="textarea" data-auto-size="true" data-max-height="400" data-prepend="<span class=\'mif-bubbles\'></span>">Hello: '+id+'</textarea>';
+                        ta.innerHTML = '<textarea rows="10" data-role="textarea" data-auto-size="true" data-max-height="400" data-prepend="<span class=\'mif-bubbles\'></span>">Hello: '+id+'</textarea>';
         
                         document.getElementById('m_container').appendChild(ta);
 
@@ -60,7 +60,7 @@
                 document.getElementById('bottom_div').classList.remove('d-b');
                 document.getElementById('bottom_div').classList.add('d-n');
                 document.getElementById('map').classList.remove('bg');
-                socket = null;
+ 
             }
         }
     });
