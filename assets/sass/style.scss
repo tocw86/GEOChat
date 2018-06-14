@@ -2,6 +2,12 @@ $opacity:0.7;
 $sepia: rgba(255, 255, 255, $opacity);
 $sepiaHex:#ffffff;
 $success:#60a917;
+
+.vnotify-item{
+    @media screen and(max-width:480px) {
+        width: 19em !important;
+    }
+}
 #bottom_loader{
     top:4vh;
 margin: 0 auto;
