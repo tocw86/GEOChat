@@ -35,6 +35,9 @@ class Init {
     private enabled: boolean = true;
     private sender_line: L.Polyline<GeoJSON.LineString | GeoJSON.MultiLineString, any>;
     private receiver_line: L.Polyline<GeoJSON.LineString | GeoJSON.MultiLineString, any>;
+    private communicator: any = {
+
+    }
 
 
     /**
@@ -177,25 +180,35 @@ class Init {
      */
     private startHandshake = (user_id: string, $this: any): void => {
 
-        //block moving
-        this.moving = false;
+        if (this.moving) {
 
-        var friend_position = $this.getLatLng();
-        var my_position = this.marker.getLatLng();
+            this.communicator.me = this;
+            this.communicator.friend = $this
 
+            var friend_position = $this.getLatLng();
+            var my_position = this.marker.getLatLng();
+ 
+            //block moving
+            this.moving = false;
+            this.communicator.me = this;
+            this.communicator.friend = $this;
 
-        this.sender_line = L.polyline([[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]], {
-            color: 'red',
-            opacity: 1,
-            weight: 2
-        }).addTo(this.map);
-
-        //comunicate to friend
-        this.socket.emit('start_connect', JSON.stringify({ to: user_id, from: this.user_id, gps: [[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]] }));
-
+            //comunicate to friend
+            this.socket.emit('start_connect', JSON.stringify({ to: user_id, from: this.user_id, gps: [[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]] }));
+        }
     }
 
-    private notify(type: string, text: string, title: string) {
+
+    /**
+     * 
+     * Make notify
+     * 
+     * @param  {string} type
+     * @param  {string} text
+     * @param  {string} title
+     * @returns void
+     */
+    private notify(type: string, text: string, title: string): void {
         vNotify[type]({
             text: text,
             title: title,
@@ -208,6 +221,23 @@ class Init {
      */
     private triggerSocketEvents = (): void => {
         var self = this;
+
+        this.socket.on('draw_line', function (flag: boolean) {
+ 
+            if (flag) {
+
+                var friend_position = self.communicator.friend.getLatLng();
+                var my_position = self.marker.getLatLng();
+ 
+                self.sender_line = L.polyline([[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]], {
+                    color: 'red',
+                    opacity: 1,
+                    weight: 2
+                }).addTo(self.map);
+
+            }
+
+        });
 
         this.socket.on('make_line', function () {
             self.notify('info', 'Private Room', 'Connected to user');
@@ -231,7 +261,7 @@ class Init {
                     self.enabled = false;
                     self.socket.emit('handshake_success', data)
 
-                    this.receiver_line = L.polyline(connection_data.gps, {
+                    self.receiver_line = L.polyline(connection_data.gps, {
                         color: 'green',
                         opacity: 1,
                         weight: 2
