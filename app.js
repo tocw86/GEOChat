@@ -14,6 +14,9 @@ app.get('/', function (req, res) {
 app.get('/leaflet.js', function (req, res) {
     res.sendFile(__dirname + '/lib/leaflet/leaflet.js');
 });
+app.get('/leaflet.geometryutil.js', function (req, res) {
+    res.sendFile(__dirname + '/lib/leaflet/leaflet.geometryutil.js');
+});
 app.get('/leaflet.css', function (req, res) {
     res.sendFile(__dirname + '/lib/leaflet/leaflet.css');
 });
@@ -58,7 +61,6 @@ app.get('/vanilla-notify.js', function (req, res) {
 });
 
 var users = new warehouse.Warehouse();
-var disconnected = [];
 // When a client connects, we note it in the console
 io.sockets.on('connection', function (socket) {
     var id = null;
@@ -89,7 +91,7 @@ io.sockets.on('connection', function (socket) {
 
         socket.emit('console', id);
     });
-
+ 
     socket.on('start_connect', function (data) {
         if (users.isJson(data)) {
             var connection_data = JSON.parse(data);

@@ -187,15 +187,40 @@ class Init {
 
             var friend_position = $this.getLatLng();
             var my_position = this.marker.getLatLng();
- 
-            //block moving
-            this.moving = false;
-            this.communicator.me = this;
-            this.communicator.friend = $this;
 
-            //comunicate to friend
-            this.socket.emit('start_connect', JSON.stringify({ to: user_id, from: this.user_id, gps: [[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]] }));
+            var distance = this.calculateDistance(my_position.lat, friend_position.lat, my_position.lng, friend_position.lng);
+
+            if (distance < 3000) {
+
+                //block moving
+                this.moving = false;
+                this.communicator.me = this;
+                this.communicator.friend = $this;
+
+                //comunicate to friend
+                this.socket.emit('start_connect', JSON.stringify({ to: user_id, from: this.user_id, gps: [[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]] }));
+
+            } else {
+                alert("To far to make connection (" + distance + " m). Min. distance 3000m");
+            }
+
+
         }
+    }
+
+    /**
+     * Return distance 
+     * @param  {number} lat1
+     * @param  {number} lat2
+     * @param  {number} long1
+     * @param  {number} long2
+     */
+    private calculateDistance = (lat1: number, lat2: number, long1: number, long2: number) => {
+        let p = 0.017453292519943295;    // Math.PI / 180
+        let c = Math.cos;
+        let a = 0.5 - c((lat1 - lat2) * p) / 2 + c(lat2 * p) * c((lat1) * p) * (1 - c(((long1 - long2) * p))) / 2;
+        let dis = (12742 * Math.asin(Math.sqrt(a))); // 2 * R; R = 6371 km
+        return Math.round(dis * 1000); //distance m
     }
 
 
@@ -222,13 +247,16 @@ class Init {
     private triggerSocketEvents = (): void => {
         var self = this;
 
+        /**
+         * Sender draw line
+         */
         this.socket.on('draw_line', function (flag: boolean) {
- 
+
             if (flag) {
 
                 var friend_position = self.communicator.friend.getLatLng();
                 var my_position = self.marker.getLatLng();
- 
+
                 self.sender_line = L.polyline([[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]], {
                     color: 'red',
                     opacity: 1,
@@ -238,13 +266,19 @@ class Init {
             }
 
         });
-
+        /**
+         * Sender make line
+         */
         this.socket.on('make_line', function () {
             self.notify('info', 'Private Room', 'Connected to user');
             self.sender_line.setStyle({
                 color: 'green'
             });
         });
+
+        /**
+         * Sender remove line
+         */
         this.socket.on('remove_line', function () {
             self.notify('error', 'Private Room', 'Friend refuse invitation');
             self.map.removeLayer(self.sender_line);
@@ -252,6 +286,9 @@ class Init {
             self.moving = true;
         });
 
+        /**
+         * Friend handshake
+         */
         this.socket.on('handshake', function (data: string) {
             var connection_data = JSON.parse(data);
             if (connection_data.to == self.user_id && self.moving) {
