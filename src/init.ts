@@ -275,6 +275,26 @@ class Init {
                 color: 'green'
             });
         });
+        /**
+         * Sender make button disconnect
+         */
+        this.socket.on('make_button_disconnect', function () {
+            var div = document.createElement('div');
+            div.setAttribute("class", "d-b");
+             
+            var container = document.getElementById("console");
+            container.appendChild(div);
+
+            var button = document.createElement('button');
+            button.innerHTML = "Disconnect";
+            
+            div.appendChild(button);
+            button.addEventListener("click",function(){
+
+
+            });
+
+        });
 
         /**
          * Sender remove line
@@ -325,7 +345,7 @@ class Init {
             var data = JSON.parse(usersData);
 
             for (var i = 0; i < data.length; i++) {
-                if (data[i].user_id != self.user_id) {
+                if (data[i].user_id != self.user_id && data[i].enabled) {
                     var marker = self.markerFactory(data[i].lat, data[i].lng, data[i].user_id, data[i].markerType);
                     self.usersMarkers.push(
                         {
