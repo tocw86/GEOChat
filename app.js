@@ -144,11 +144,11 @@ io.sockets.on('connection', function (socket) {
     socket.on('disconnect', function () {
 
         setTimeout(function () {
-
+             
             console.log('Disconnected: ' + id);
             users.removeUser(id);
             socket.broadcast.emit('remove_marker', id);
-            socket.emit('console', false);
+          
 
         }, 500);
 

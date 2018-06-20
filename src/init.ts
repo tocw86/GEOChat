@@ -38,6 +38,7 @@ class Init {
     private communicator: any = {
 
     }
+    private connected: boolean = true;
 
 
     /**
@@ -223,6 +224,25 @@ class Init {
         return Math.round(dis * 1000); //distance m
     }
 
+    /**
+     * Check if user is connect
+     */
+    private isConnected = (): boolean => {
+        if (this.connected && this.socket.connected) {
+            return true;
+        } else if (this.connected && !this.socket.connected) {
+            this.notify("error", "Disconnected please refresh page", "Error");
+            this.connected = false;
+            this.cleanAllMarkers();
+            this.disableMap();
+            this.disableUser();
+            this.changeStatusHtml();
+            return false;
+        } else if (!this.connected && !this.socket.connected) {
+            return false;
+        }
+
+    }
 
     /**
      * 
@@ -281,15 +301,15 @@ class Init {
         this.socket.on('make_button_disconnect', function () {
             var div = document.createElement('div');
             div.setAttribute("class", "d-b");
-             
+
             var container = document.getElementById("console");
             container.appendChild(div);
 
             var button = document.createElement('button');
             button.innerHTML = "Disconnect";
-            
+
             div.appendChild(button);
-            button.addEventListener("click",function(){
+            button.addEventListener("click", function () {
 
 
             });
@@ -411,6 +431,42 @@ class Init {
 
     }
 
+    private cleanAllMarkers = (): void => {
+        for (var i = 0; i < this.usersMarkers.length; i++) {
+            this.usersMarkers[i].marker.remove();
+        }
+        this.marker.remove();
+
+    }
+
+    private disableMap = (): void => {
+        this.map.scrollWheelZoom.disable()
+        this.map.dragging.disable()
+        this.map.touchZoom.disable()
+        this.map.doubleClickZoom.disable()
+        this.map.boxZoom.disable()
+        this.map.keyboard.disable()
+
+        if (this.map.tap)
+            this.map.tap.disable()
+
+        this.map._handlers.forEach(function (handler: any) {
+            handler.disable();
+
+        });
+    }
+
+    private disableUser = (): void => {
+        this.enabled = false;
+        this.moving = false;
+    }
+
+
+    private changeStatusHtml =():void=>{
+        document.getElementById("status_toolbar").innerHTML = "  <i class=\"fas fa-ban danger\"></i>&nbsp;disconnected";
+    }
+
+
     /**
      * Init map
      */
@@ -445,7 +501,9 @@ class Init {
         var self = this;
         this.map.on('click', function (event: any) {
 
-            if (typeof self.marker != 'undefined' && self.moving) {
+            self.isConnected();
+
+            if (typeof self.marker != 'undefined' && self.moving && self.isConnected()) {
                 self.lat = event.latlng.lat;
                 self.lng = event.latlng.lng;
 
