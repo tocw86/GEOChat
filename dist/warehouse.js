@@ -5,6 +5,13 @@ var Warehouse = /** @class */ (function () {
         this.users = [];
         this.keys = [];
     }
+    /**
+     * Insert
+     * @param  {any} user
+     * @param  {string} privateKey
+     * @param  {string} publicKey
+     * @returns void
+     */
     Warehouse.prototype.insert = function (user, privateKey, publicKey) {
         this.users.push(user);
         this.keys.push({
@@ -13,9 +20,17 @@ var Warehouse = /** @class */ (function () {
             publicKey: publicKey,
         });
     };
+    /**
+     * Get users
+     * @returns Array
+     */
     Warehouse.prototype.getUsers = function () {
         return this.users;
     };
+    /**
+     * Remove user
+     * @param  {string} user_id
+     */
     Warehouse.prototype.removeUser = function (user_id) {
         var self = this;
         this.users.map(function (item, key) {
@@ -24,6 +39,10 @@ var Warehouse = /** @class */ (function () {
             }
         });
     };
+    /**
+     * Update
+     * @param  {any} userData
+     */
     Warehouse.prototype.updateData = function (userData) {
         this.users.map(function (item, key) {
             if (userData.user_id == item.user_id) {
@@ -32,6 +51,11 @@ var Warehouse = /** @class */ (function () {
             }
         });
     };
+    /**
+     * Check if json type
+     * @param  {string} json
+     * @returns boolean
+     */
     Warehouse.prototype.isJson = function (json) {
         try {
             var obj = JSON.parse(json);
@@ -41,17 +65,25 @@ var Warehouse = /** @class */ (function () {
         }
         return true;
     };
+    /**
+     * Chek if user is enabled
+     * @param  {string} user_id
+     * @returns boolean
+     */
     Warehouse.prototype.checkAvaible = function (user_id) {
         var flag = false;
         this.users.map(function (item, key) {
             if (user_id == item.user_id && item.enabled) {
                 flag = true;
-                return true;
             }
         });
         return flag;
     };
-    Warehouse.prototype.hide = function (user_id) {
+    /**
+     * Disable
+     * @param  {string} user_id
+     */
+    Warehouse.prototype.disable = function (user_id) {
         var flag = false;
         this.users.map(function (item, key) {
             if (user_id == item.user_id) {
@@ -60,7 +92,11 @@ var Warehouse = /** @class */ (function () {
         });
         return flag;
     };
-    Warehouse.prototype.show = function (user_id) {
+    /**
+     * Enable
+     * @param  {string} user_id
+     */
+    Warehouse.prototype.enable = function (user_id) {
         var flag = false;
         this.users.map(function (item, key) {
             if (user_id == item.user_id) {

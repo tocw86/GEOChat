@@ -14,6 +14,9 @@ app.get('/', function (req, res) {
 app.get('/leaflet.js', function (req, res) {
     res.sendFile(__dirname + '/lib/leaflet/leaflet.js');
 });
+app.get('/leaflet.geometryutil.js', function (req, res) {
+    res.sendFile(__dirname + '/lib/leaflet/leaflet.geometryutil.js');
+});
 app.get('/leaflet.css', function (req, res) {
     res.sendFile(__dirname + '/lib/leaflet/leaflet.css');
 });
@@ -58,7 +61,6 @@ app.get('/vanilla-notify.js', function (req, res) {
 });
 
 var users = new warehouse.Warehouse();
-var disconnected = [];
 // When a client connects, we note it in the console
 io.sockets.on('connection', function (socket) {
     var id = null;
@@ -89,12 +91,15 @@ io.sockets.on('connection', function (socket) {
 
         socket.emit('console', id);
     });
-
+ 
     socket.on('start_connect', function (data) {
         if (users.isJson(data)) {
-            var header = JSON.parse(data);
-            if (header.hasOwnProperty('to') && header.hasOwnProperty('from') && users.checkAvaible(header.to)) {
-                socket.to(header.to).emit('handshake', data);
+            var connection_data = JSON.parse(data);
+            if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('from') && users.checkAvaible(connection_data.to)) {
+                socket.emit('draw_line', true);
+                socket.to(connection_data.to).emit('handshake', data);
+            }else{
+                socket.to(connection_data.from).emit('draw_line', false);
             }
 
         }
@@ -103,46 +108,52 @@ io.sockets.on('connection', function (socket) {
     socket.on('handshake_success', function (data) {
         if (users.isJson(data)) {
             var connection_data = JSON.parse(data);
-            users.hide(connection_data.to);
-            users.hide(connection_data.from);
-            socket.to(connection_data.from).emit('make_line');
+            if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('from') && users.checkAvaible(connection_data.to)) {
+                users.disable(connection_data.to);
+                users.disable(connection_data.from);
+                socket.to(connection_data.from).emit('make_line');
+                socket.to(connection_data.to).emit('make_button_disconnect');
+                socket.to(connection_data.from).emit('make_button_disconnect');
+            }
+
         }
     });
     socket.on('handshake_failed', function (data) {
-            if (users.isJson(data)) {
-                var connection_data = JSON.parse(data);
-                users.show(connection_data.to);
-                users.show(connection_data.from);
-                socket.to(connection_data.from).emit('remove_line');
-            }
-    
+        if (users.isJson(data)) {
+            var connection_data = JSON.parse(data);
+            users.enable(connection_data.to);
+            users.enable(connection_data.from);
+            socket.to(connection_data.from).emit('remove_line');
+        }
+
 
     });
 
 
-socket.on('update_user', function (userData) {
-    users.updateData(JSON.parse(userData));
-    socket.broadcast.emit('move_marker', userData);
+    socket.on('update_user', function (userData) {
+        users.updateData(JSON.parse(userData));
+        socket.broadcast.emit('move_marker', userData);
 
-}); socket.on('remove_user', function (userId) {
-    console.log('Klient: ' + userId + ' opuscił czat!');
-    users.removeUser(userId);
-    socket.broadcast.emit('remove_marker', userId);
-});
+    });
+    socket.on('remove_user', function (userId) {
+        console.log('Klient: ' + userId + ' opuscił czat!');
+        users.removeUser(userId);
+        socket.broadcast.emit('remove_marker', userId);
+    });
 
-socket.on('disconnect', function () {
+    socket.on('disconnect', function () {
 
-    setTimeout(function () {
+        setTimeout(function () {
+             
+            console.log('Disconnected: ' + id);
+            users.removeUser(id);
+            socket.broadcast.emit('remove_marker', id);
+          
 
-        console.log('Disconnected: ' + id);
-        users.removeUser(id);
-        socket.broadcast.emit('remove_marker', id);
-        socket.emit('console', false);
-
-    }, 500);
+        }, 500);
 
 
-});
+    });
 
 });
 
