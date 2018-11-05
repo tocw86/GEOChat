@@ -1,7 +1,7 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var keypair = require('keypair');
-var auth = require('./dist/auth');
+var auth = require('dist/auth');
 var warehouse = require('./dist/warehouse');
 var io = require('socket.io').listen(http);
 io.set('origins', 'http://localhost:3000');
@@ -91,14 +91,14 @@ io.sockets.on('connection', function (socket) {
 
         socket.emit('console', id);
     });
- 
+
     socket.on('start_connect', function (data) {
         if (users.isJson(data)) {
             var connection_data = JSON.parse(data);
             if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('from') && users.checkAvaible(connection_data.to)) {
                 socket.emit('draw_line', true);
                 socket.to(connection_data.to).emit('handshake', data);
-            }else{
+            } else {
                 socket.to(connection_data.from).emit('draw_line', false);
             }
 
@@ -144,11 +144,11 @@ io.sockets.on('connection', function (socket) {
     socket.on('disconnect', function () {
 
         setTimeout(function () {
-             
+
             console.log('Disconnected: ' + id);
             users.removeUser(id);
             socket.broadcast.emit('remove_marker', id);
-          
+
 
         }, 500);
 
