@@ -17,11 +17,11 @@
             if (attr != null && attr != '' && ['red', 'green', 'blue'].indexOf(attr) > -1) {
                 var socket = $io.connect('http://localhost:3000');
                 socket.on('console', function (id) {
-                    if (id){
-                       var bl = document.getElementById('bottom_loader');
-                       bl.classList.remove('d-b');
+                    if (id) {
+                        var bl = document.getElementById('bottom_loader');
+                        bl.classList.remove('d-b');
                         bl.classList.add('d-n');
- 
+
                         var st = document.getElementById('status_toolbar');
                         st.classList.remove('d-n');
                         st.classList.add('d-b');
@@ -32,35 +32,35 @@
 
                         cp.innerHTML = '';
                         var i = document.createElement('i');
-             
-                        i.setAttribute('class','fas fa-angle-up');
+
+                        i.setAttribute('class', 'fas fa-angle-up');
                         cp.appendChild(i);
 
                         document.getElementById('c_center').classList.add('d-n');
 
                         document.getElementById('m_container').innerHTML = '';
                         var ta = document.createElement('div');
-                        ta.innerHTML = '<textarea rows="10" data-role="textarea" data-auto-size="true" data-max-height="400" data-prepend="<span class=\'mif-bubbles\'></span>">Hello: '+id+'</textarea>';
-        
+                        ta.innerHTML = '<textarea rows="10" data-role="textarea" data-auto-size="true" data-max-height="400" data-prepend="<span class=\'mif-bubbles\'></span>">Hello: ' + id + '</textarea>';
+
                         document.getElementById('m_container').appendChild(ta);
 
-                       
+
                         console('success', 'Connected', 'Status');
-                    }else{
+                    } else {
                         console('error', 'Disconnected', 'Status');
                     }
-                       
-                    
-                       
+
+
+
 
                 });
                 new Init(socket, attr);
-              
+
 
                 document.getElementById('bottom_div').classList.remove('d-b');
                 document.getElementById('bottom_div').classList.add('d-n');
                 document.getElementById('map').classList.remove('bg');
- 
+
             }
         }
     });
@@ -71,8 +71,8 @@
         if (bottom_div.classList.contains('show')) {
             this.innerHTML = '';
             var i = document.createElement('i');
- 
-            i.setAttribute('class','fas fa-angle-up');
+
+            i.setAttribute('class', 'fas fa-angle-up');
             this.appendChild(i);
             bottom_div.classList.remove('show');
             bottom_div.classList.remove('d-b');
@@ -84,7 +84,7 @@
         } else {
             this.innerHTML = '';
             var i = document.createElement('i');
-            i.setAttribute('class','fas fa-angle-down');
+            i.setAttribute('class', 'fas fa-angle-down');
             this.appendChild(i);
             bottom_div.classList.remove('hide');
             bottom_div.classList.remove('d-n');
