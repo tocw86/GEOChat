@@ -50,12 +50,12 @@
                         console('error', 'Disconnected', 'Status');
                     }
 
-
-
-
                 });
-                new Init(socket, attr);
 
+                var elt = new Init(socket, attr);
+                socket.on('connect', function () {
+                    elt.start();
+                });
 
                 document.getElementById('bottom_div').classList.remove('d-b');
                 document.getElementById('bottom_div').classList.add('d-n');
