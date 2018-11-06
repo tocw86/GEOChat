@@ -1,11 +1,11 @@
 var app = require('express')();
-var server = require('http').createServer();
+var http = require('http').Server(app);
 var keypair = require('keypair');
 var auth = require('./dist/auth');
 var warehouse = require('./dist/warehouse');
-var io = require('socket.io').listen(server);
+var io = require('socket.io').listen(http);
 io.set('origins', '*:*');
-io.origins(['//geochat.pl:3000']);
+io.origins(['https://geochat.pl:3000', 'http://geochat.pl:3000']);
 
 
 // Loading the index file . html displayed to the client
@@ -158,6 +158,8 @@ io.sockets.on('connection', function (socket) {
 
 });
 
-io.listen(3000, function () {
+
+
+http.listen(3000, function () {
     console.log('listening on *:3000');
 });
