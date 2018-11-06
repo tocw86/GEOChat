@@ -51,11 +51,11 @@ class Init {
         this.socket = socket;
         this.markerType = markerType;
 
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(this.run, this.error);
-        } else {
-            alert("Geolocation is not supported by this browser.");
-        }
+        // if (navigator.geolocation) {
+        //     navigator.geolocation.getCurrentPosition(this.run, this.error);
+        // } else {
+        //     alert("Geolocation is not supported by this browser.");
+        // }
     }
 
     public error = () => {
@@ -462,7 +462,7 @@ class Init {
     }
 
 
-    private changeStatusHtml =():void=>{
+    private changeStatusHtml = (): void => {
         document.getElementById("status_toolbar").innerHTML = "  <i class=\"fas fa-ban danger\"></i>&nbsp;disconnected";
     }
 
