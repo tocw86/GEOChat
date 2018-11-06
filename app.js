@@ -7,6 +7,8 @@ var io = require('socket.io').listen(http);
 io.set('origins', '*:*');
 io.origins(['http://geochat.pl:3000']);
 
+//TODO
+//Trzeba wykrywać ssl i jeśli jest odpalać usługę lokalizacji a jak nie to tradycyjnie
 
 // Loading the index file . html displayed to the client
 app.get('/', function (req, res) {
