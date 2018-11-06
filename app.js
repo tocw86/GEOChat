@@ -3,7 +3,7 @@ var server = require('http').createServer();
 var keypair = require('keypair');
 var auth = require('./dist/auth');
 var warehouse = require('./dist/warehouse');
-var io = require('socket.io')(server);
+var io = require('socket.io').listen(server);
 io.set('origins', '*:*');
 io.origins(['//geochat.pl:3000']);
 
