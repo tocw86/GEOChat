@@ -50,13 +50,12 @@ class Init {
 
         this.socket = socket;
         this.markerType = markerType;
-        this.run(this.defaultPosition);
 
-        // if (navigator.geolocation) {
-        //     navigator.geolocation.getCurrentPosition(this.run, this.error);
-        // } else {
-        //     alert("Geolocation is not supported by this browser.");
-        // }
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(this.run, this.error);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
     }
 
     public error = () => {
