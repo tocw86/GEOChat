@@ -6,7 +6,7 @@ var warehouse = require('./dist/warehouse');
 var io = require('socket.io').listen(http);
 io.set('origins', '*:*');
 io.set('transports', ['websocket']);
-io.origins(['https://geochat.pl:3000', 'http://geochat.pl:3000']);
+io.origins(['https://geochat.pl:3000']);
 
 
 // Loading the index file . html displayed to the client

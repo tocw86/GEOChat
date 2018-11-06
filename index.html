@@ -25,15 +25,15 @@
 
 
     <div id="map" class="bg"></div>
-    
+
     <div id="c_center" class="c-center">
         <h1>GeoChat</h1>
         <ul class="unstyled-list custom-list-marker text-left">
- 
-                <li data-marker="✓">RSA PEM 256bit encryption</li>
-                <li data-marker="✓">OpenStreetMap</li>
-                <li data-marker="✓">Socket IO real-time engine</li>
-            </ul>
+
+            <li data-marker="✓">RSA PEM 256bit encryption</li>
+            <li data-marker="✓">OpenStreetMap</li>
+            <li data-marker="✓">Socket IO real-time engine</li>
+        </ul>
     </div>
 
     <div id="chevron_pull" class="down">
@@ -41,48 +41,48 @@
     </div>
     <div id="bottom_div" class="hide d-n">
         <br>
-            <div class="container">
-                <div class="grid">
+        <div class="container">
+            <div class="grid">
 
-                    <div class="row text-center">
-                        <div class="cell-md-12" id="m_container">
-                            <p class="text-leader">To start, choose your marker:</p>
-                            <br>
-                            <div class="row" id="marker-holder">
+                <div class="row text-center">
+                    <div class="cell-md-12" id="m_container">
+                        <p class="text-leader">To start, choose your marker:</p>
+                        <br>
+                        <div class="row" id="marker-holder">
 
-                                <div class="cell">
-                                    <button class="shortcut primary outline" data-marker="blue">
-                                        <span class="fas fa-3x fa-map-marker-alt"></span>
-                                    </button>
-                                </div>
-
-                                <div class="cell">
-                                    <button class="shortcut success outline" data-marker="green">
-                                        <span class="fas fa-3x fa-map-marker-alt"></span>
-                                    </button>
-                                </div>
-                                <div class="cell">
-                                    <button class="shortcut alert  outline" data-marker="red">
-                                        <span class="fas fa-3x fa-map-marker-alt"></span>
-                                    </button>
-                                </div>
-
+                            <div class="cell">
+                                <button class="shortcut primary outline" data-marker="blue">
+                                    <span class="fas fa-3x fa-map-marker-alt"></span>
+                                </button>
                             </div>
-                        </div>
 
-
-
-                        <div class="cell-md-12" id="console">
-                            <div id="bottom_loader" class="d-b" data-role="activity" data-type="simple" data-style="dark">Waiting...</div>
-                            <div id="status_toolbar" class="d-n">
-                                <i class="t-s fas fa-check success"></i>&nbsp;connected
+                            <div class="cell">
+                                <button class="shortcut success outline" data-marker="green">
+                                    <span class="fas fa-3x fa-map-marker-alt"></span>
+                                </button>
+                            </div>
+                            <div class="cell">
+                                <button class="shortcut alert  outline" data-marker="red">
+                                    <span class="fas fa-3x fa-map-marker-alt"></span>
+                                </button>
                             </div>
 
                         </div>
                     </div>
-                </div>
 
+
+
+                    <div class="cell-md-12" id="console">
+                        <div id="bottom_loader" class="d-b" data-role="activity" data-type="simple" data-style="dark">Waiting...</div>
+                        <div id="status_toolbar" class="d-n">
+                            <i class="t-s fas fa-check success"></i>&nbsp;connected
+                        </div>
+
+                    </div>
+                </div>
             </div>
+
+        </div>
         <script src="vanilla-notify.js"></script>
         <script src="leaflet.js"></script>
         <script src="leaflet.geometryutil.js"></script>
