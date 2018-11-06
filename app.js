@@ -4,7 +4,7 @@ var keypair = require('keypair');
 var auth = require('./dist/auth');
 var warehouse = require('./dist/warehouse');
 var io = require('socket.io').listen(http);
-io.set('origins', 'https://geochat.pl:3000');
+io.set('origins', '*:*');
 
 
 // Loading the index file . html displayed to the client
