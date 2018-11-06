@@ -16,7 +16,8 @@
             var attr = e.target.getAttribute('data-marker');
             if (attr != null && attr != '' && ['red', 'green', 'blue'].indexOf(attr) > -1) {
                 var socket = $io.connect('//geochat.pl:3000', {
-                    secure: true
+                    //secure: true,
+                    transports: ['websocket']
                 });
                 socket.on('console', function (id) {
                     if (id) {
