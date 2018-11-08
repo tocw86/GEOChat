@@ -15,7 +15,7 @@
         if (e.target.tagName === 'BUTTON') {
             var attr = e.target.getAttribute('data-marker');
             if (attr != null && attr != '' && ['red', 'green', 'blue'].indexOf(attr) > -1) {
-                var socket = $io.connect('http://geochat.test:3000');
+                var socket = $io.connect('http://geochat.pl:3000');
                 socket.on('console', function (id) {
                     if (id) {
                         var bl = document.getElementById('bottom_loader');
