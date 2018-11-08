@@ -471,7 +471,7 @@ class Init {
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + this.token, {
             attribution: '',
             maxZoom: 16,
-            id: 'mapbox.streets-satellite',
+            id: "mapbox.streets-satellite",
             accessToken: this.token
         }).addTo(this.map);
 
