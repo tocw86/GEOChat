@@ -1,4 +1,5 @@
 import { Buffer } from 'buffer';
+import * as keypair from "keypair";
 import * as crypto from "crypto-browserify";
 import { generateString } from './helpers';
 export class Auth {
@@ -7,11 +8,13 @@ export class Auth {
     private privateKey: string;
     private enabled: boolean;
     private user_id: string;
- 
-    constructor(publicKey: string, privateKey: string,  user_id:string) {
- 
-        this.publicKey = publicKey;
-        this.privateKey = privateKey;
+
+    constructor(user_id: string) {
+
+        var keys = keypair(256);
+
+        this.publicKey = keys.public;
+        this.privateKey = keys.private;
         this.enabled = true;
 
         this.user_id = user_id;
@@ -23,7 +26,7 @@ export class Auth {
         return this.enabled;
     }
 
-    public  encrypt(plaintext: string): string {
+    public encrypt(plaintext: string): string {
         if (!this.enabled)
             return plaintext;
 
@@ -44,14 +47,14 @@ export class Auth {
         return plaintext.toString('utf8')
     }
 
-   public getId(): string {
+    public getId(): string {
         return this.user_id;
     }
- 
-    public getPrivateKey():string{
+
+    public getPrivateKey(): string {
         return this.privateKey;
     }
-    public getPublicKey():string{
+    public getPublicKey(): string {
         return this.publicKey;
     }
 

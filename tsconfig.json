@@ -7,6 +7,10 @@
         "src/init.ts",
     ],
     "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "*": ["types/*"]
+        },
         "noImplicitAny": true,
         "target": "es5",
     }

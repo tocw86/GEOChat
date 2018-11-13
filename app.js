@@ -68,10 +68,9 @@ var users = new warehouse.Warehouse();
 io.sockets.on('connection', function (socket) {
     var id = null;
     socket.on('new_user', function (data) {
-        var keys = keypair(256);
         var user_data = JSON.parse(data);
-        var elt = new auth.Auth(keys.public, keys.private, user_data.user_id);
-
+        //przenieść do window
+        var elt = new auth.Auth(user_data.user_id);
         id = user_data.user_id;
 
         var allUsers = users.getUsers();

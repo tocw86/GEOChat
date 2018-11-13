@@ -1,11 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var buffer_1 = require("buffer");
+var keypair = require("keypair");
 var crypto = require("crypto-browserify");
 var Auth = /** @class */ (function () {
-    function Auth(publicKey, privateKey, user_id) {
-        this.publicKey = publicKey;
-        this.privateKey = privateKey;
+    function Auth(user_id) {
+        var keys = keypair(256);
+        this.publicKey = keys.public;
+        this.privateKey = keys.private;
         this.enabled = true;
         this.user_id = user_id;
         console.log('Zapisano dane usera:' + user_id);
