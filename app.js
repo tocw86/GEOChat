@@ -5,7 +5,7 @@ var auth = require('./dist/auth');
 var warehouse = require('./dist/warehouse');
 var io = require('socket.io').listen(http);
 //['http://geochat.pl:3000'], ['https://geochat.pl:3000']);
-io.origins(['*:*', 'http://geochat.pl:3000', 'https://geochat.pl:3000']);
+io.origins(['https://geochat.pl:3000', 'http://geochat.pl:3000']);
 
 //TODO
 //Trzeba wykrywać ssl i jeśli jest odpalać usługę lokalizacji a jak nie to tradycyjnie
