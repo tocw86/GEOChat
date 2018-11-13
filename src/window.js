@@ -12,10 +12,11 @@
     }
 
     document.getElementById('marker-holder').addEventListener('click', function (e) {
+        var _protocol = location.protocol;
         if (e.target.tagName === 'BUTTON') {
             var attr = e.target.getAttribute('data-marker');
             if (attr != null && attr != '' && ['red', 'green', 'blue'].indexOf(attr) > -1) {
-                var socket = $io.connect('//geochat.pl:3000', {
+                var socket = $io.connect(_protocol + '//geochat.pl:3000', {
                     secure: true
                 });
                 // var socket = $io.connect('//localhost:3000', {
