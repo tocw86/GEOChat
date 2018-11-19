@@ -1,7 +1,7 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var keypair = require('keypair');
-var auth = require('./dist/auth');
+var auth = require('./dist/Auth');
 var warehouse = require('./dist/warehouse');
 var io = require('socket.io').listen(http);
 //['http://geochat.pl:3000'], ['https://geochat.pl:3000']);
@@ -23,18 +23,15 @@ app.get('/leaflet.geometryutil.js', function (req, res) {
 app.get('/leaflet.css', function (req, res) {
     res.sendFile(__dirname + '/lib/leaflet/leaflet.css');
 });
-
 app.get('/style.css', function (req, res) {
     res.sendFile(__dirname + '/assets/css/style.css');
 });
-
 app.get('/fontawesome-all.css', function (req, res) {
     res.sendFile(__dirname + '/lib/fontawesome/fontawesome-all.css');
 });
 app.get('/bg.jpg', function (req, res) {
     res.sendFile(__dirname + '/assets/img/bg.jpg');
 });
-
 app.get('/init.js', function (req, res) {
     res.sendFile(__dirname + '/dist/init.js');
 });

@@ -497,8 +497,6 @@ class Init {
 
             self.isConnected();
 
-            alert(self.isConnected());
-
             if (typeof self.marker != 'undefined' && self.moving && self.isConnected()) {
                 self.lat = event.latlng.lat;
                 self.lng = event.latlng.lng;
