@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Warehouse = /** @class */ (function () {
     function Warehouse() {
         this.users = [];
-        this.keys = [];
     }
     /**
      * Insert
@@ -12,13 +11,8 @@ var Warehouse = /** @class */ (function () {
      * @param  {string} publicKey
      * @returns void
      */
-    Warehouse.prototype.insert = function (user, privateKey, publicKey) {
+    Warehouse.prototype.insert = function (user) {
         this.users.push(user);
-        this.keys.push({
-            user_id: user.user_id,
-            privateKey: privateKey,
-            publicKey: publicKey,
-        });
     };
     /**
      * Get users

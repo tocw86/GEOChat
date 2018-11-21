@@ -1,7 +1,6 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var keypair = require('keypair');
-var auth = require('./dist/Auth');
 var warehouse = require('./dist/warehouse');
 var io = require('socket.io').listen(http);
 //['http://geochat.pl:3000'], ['https://geochat.pl:3000']);
@@ -70,7 +69,6 @@ io.sockets.on('connection', function (socket) {
     socket.on('new_user', function (data) {
         var user_data = JSON.parse(data);
         //przenieść do window
-        var elt = new auth.Auth(user_data.user_id);
         id = user_data.user_id;
 
         var allUsers = users.getUsers();
@@ -88,7 +86,7 @@ io.sockets.on('connection', function (socket) {
             enabled: true
         }
 
-        users.insert(user, elt.getPrivateKey(), elt.getPublicKey());
+        users.insert(user);
         socket.broadcast.emit('load_user', JSON.stringify(user));
 
         socket.emit('console', id);
@@ -110,9 +108,10 @@ io.sockets.on('connection', function (socket) {
     socket.on('handshake_success', function (data) {
         if (users.isJson(data)) {
             var connection_data = JSON.parse(data);
-            if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('from') && users.checkAvaible(connection_data.to)) {
+            if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('from')) {
                 users.disable(connection_data.to);
                 users.disable(connection_data.from);
+                socket.to(connection_data.from).emit('save_friend_key',connection_data.friend_pub_key);
                 socket.to(connection_data.from).emit('make_line');
                 socket.to(connection_data.to).emit('make_button_disconnect');
                 socket.to(connection_data.from).emit('make_button_disconnect');

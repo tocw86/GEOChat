@@ -1,5 +1,6 @@
 declare var vNotify: any;
 class Init {
+    private auth:any;
     private moving: boolean = true;
     private token: string = 'pk.eyJ1IjoidG9jdzg2IiwiYSI6ImNqaHM0YTh2bzA3bDUzN254Mndyb2c4dm0ifQ.3eIb7F5PV-E6pBugRhs4cQ';
     private lat: number;
@@ -46,8 +47,8 @@ class Init {
      * 
      * @param socket Socket.io
      */
-    constructor(socket: any, markerType: string) {
-
+    constructor(socket: any, markerType: string, auth:any) {
+        this.auth = auth;
         this.socket = socket;
         this.markerType = markerType;
     }
@@ -74,6 +75,8 @@ class Init {
         this.triggerSocketEvents();
 
         this.sendUserData();
+
+        this.auth = new this.auth(this.user_id);
     }
 
     /**
@@ -193,7 +196,7 @@ class Init {
                 this.communicator.friend = $this;
 
                 //comunicate to friend
-                this.socket.emit('start_connect', JSON.stringify({ to: user_id, from: this.user_id, gps: [[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]] }));
+                this.socket.emit('start_connect', JSON.stringify({ to: user_id, from: this.user_id, gps: [[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]], sender_pub_key: this.auth.getPublicKey() }));
 
             } else {
                 alert("To far to make connection (" + distance + " m). Min. distance 3000m");
@@ -284,10 +287,17 @@ class Init {
          * Sender make line
          */
         this.socket.on('make_line', function () {
+ 
             self.notify('info', 'Private Room', 'Connected to user');
             self.sender_line.setStyle({
                 color: 'green'
             });
+
+        });
+
+        this.socket.on('save_friend_key', function(friend_pub_key:string){
+            self.communicator.friend_pub_key = friend_pub_key;
+            console.log('Zapisano klucz publiczny odbiorcy');
         });
         /**
          * Sender make button disconnect
@@ -330,14 +340,18 @@ class Init {
 
                 if (confirm('Handshake from:' + connection_data.from)) {
                     self.enabled = false;
-                    self.socket.emit('handshake_success', data)
+
+                    self.communicator.sender_pub_key = connection_data.sender_pub_key;
+                    console.log('Zapisano klucz publiczny nadawcy');
+                    connection_data.friend_pub_key = self.auth.getPublicKey();
+
+                    self.socket.emit('handshake_success', JSON.stringify(connection_data));
 
                     self.receiver_line = L.polyline(connection_data.gps, {
                         color: 'green',
                         opacity: 1,
                         weight: 2
                     }).addTo(self.map);
-
                     self.notify('info', 'Private Room', 'Connected to user');
 
                     return true;

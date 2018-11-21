@@ -1,11 +1,9 @@
 export class Warehouse {
 
     public users: Array<any>;
-    private keys: Array<any>;
 
     constructor() {
         this.users = [];
-        this.keys = [];
     }
     /**
      * Insert
@@ -14,13 +12,8 @@ export class Warehouse {
      * @param  {string} publicKey
      * @returns void
      */
-    public insert(user: any, privateKey: string, publicKey: string): void {
+    public insert(user: any): void {
         this.users.push(user);
-        this.keys.push({
-            user_id: user.user_id,
-            privateKey: privateKey,
-            publicKey: publicKey,
-        });
     }
     /**
      * Get users
