@@ -1,3 +1,4 @@
+
 var buffer_1 = require("buffer");
 var keypair = require("keypair");
 var crypto = require("crypto-browserify");
@@ -38,6 +39,4 @@ var Auth = /** @class */ (function () {
     };
     return Auth;
 }());
-
-var user = new Auth(1234);
-console.log(user);
+auth = Auth;

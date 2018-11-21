@@ -2,7 +2,7 @@
     "files": [
         "src/.d.ts",
         "src/helpers.ts",
-        "src/auth.ts",
+       // "src/auth.ts",
         "src/warehouse.ts",
         "src/init.ts",
     ],

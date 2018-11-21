@@ -3,14 +3,13 @@
     var $io = io;
     io = null;
 
-    function console(type, text, title) {
+    function notify(type, text, title) {
         vNotify[type]({
             text: text,
             title: title,
             sticky: true
         });
     }
-
     document.getElementById('marker-holder').addEventListener('click', function (e) {
         var _protocol = location.protocol;
         if (e.target.tagName === 'BUTTON') {
@@ -56,9 +55,9 @@
                         document.getElementById('m_container').appendChild(ta);
 
 
-                        console('success', 'Connected', 'Status');
+                        notify('success', 'Connected', 'Status');
                     } else {
-                        console('error', 'Disconnected', 'Status');
+                        notify('error', 'Disconnected', 'Status');
                     }
 
                 });
