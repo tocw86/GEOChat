@@ -257,6 +257,28 @@ class Init {
             sticky: true
         });
     }
+
+    
+    /**
+     * Add html button
+     * @return void
+     */
+    private makeButtonDisconnect(callback: () => void) : void{
+        var div = document.createElement('div');
+        div.setAttribute("class", "d-b");
+
+        var container = document.getElementById("console");
+        container.appendChild(div);
+
+        var button = document.createElement('button');
+        button.innerHTML = "Disconnect";
+
+        div.appendChild(button);
+        button.addEventListener("click", function () {
+            callback();
+        });
+    }
+
     /**
      * Trigger all socket events
      * @return void
@@ -303,19 +325,9 @@ class Init {
          * Sender make button disconnect
          */
         this.socket.on('make_button_disconnect', function () {
-            var div = document.createElement('div');
-            div.setAttribute("class", "d-b");
 
-            var container = document.getElementById("console");
-            container.appendChild(div);
-
-            var button = document.createElement('button');
-            button.innerHTML = "Disconnect";
-
-            div.appendChild(button);
-            button.addEventListener("click", function () {
-
-
+            self.makeButtonDisconnect(function (){
+                alert('nadawca alert');
             });
 
         });
@@ -353,7 +365,9 @@ class Init {
                         weight: 2
                     }).addTo(self.map);
                     self.notify('info', 'Private Room', 'Connected to user');
-
+                    self.makeButtonDisconnect(function(){
+                        alert('odbiorca alert');
+                    });
                     return true;
                 } else {
                     self.moving = true;

@@ -113,7 +113,7 @@ io.sockets.on('connection', function (socket) {
                 users.disable(connection_data.from);
                 socket.to(connection_data.from).emit('save_friend_key',connection_data.friend_pub_key);
                 socket.to(connection_data.from).emit('make_line');
-                socket.to(connection_data.to).emit('make_button_disconnect');
+                socket.to(connection_data.to).emit('make_button_disconnect_2');
                 socket.to(connection_data.from).emit('make_button_disconnect');
             }
 
