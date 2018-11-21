@@ -35,6 +35,9 @@ app.get('/bg.jpg', function (req, res) {
 app.get('/init.js', function (req, res) {
     res.sendFile(__dirname + '/dist/init.js');
 });
+app.get('/bundle.js', function (req, res) {
+    res.sendFile(__dirname + '/dist/bundle.js');
+});
 app.get('/window.js', function (req, res) {
     res.sendFile(__dirname + '/dist/window.js');
 });
