@@ -1,10 +1,9 @@
-
 var buffer_1 = require("buffer");
 var keypair = require("keypair");
 var crypto = require("crypto-browserify");
 var Auth = /** @class */ (function () {
     function Auth(user_id) {
-        var keys = keypair(256);
+        var keys = keypair(512);
         this.publicKey = keys.public;
         this.privateKey = keys.private;
         this.enabled = true;

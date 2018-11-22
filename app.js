@@ -111,7 +111,7 @@ io.sockets.on('connection', function (socket) {
             if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('from')) {
                 users.disable(connection_data.to);
                 users.disable(connection_data.from);
-                socket.to(connection_data.from).emit('save_friend_key',connection_data.friend_pub_key);
+                socket.to(connection_data.from).emit('save_friend_key', connection_data.friend_pub_key);
                 socket.to(connection_data.from).emit('make_line');
                 socket.to(connection_data.to).emit('make_button_disconnect_2');
                 socket.to(connection_data.from).emit('make_button_disconnect');
@@ -119,6 +119,11 @@ io.sockets.on('connection', function (socket) {
 
         }
     });
+
+    socket.on('send_message', function (data) {
+        console.log(JSON.parse(data));
+    });
+
     socket.on('handshake_failed', function (data) {
         if (users.isJson(data)) {
             var connection_data = JSON.parse(data);

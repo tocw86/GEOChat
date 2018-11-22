@@ -11,7 +11,7 @@ export class Auth {
 
     constructor(user_id: string) {
 
-        var keys = keypair(256);
+        var keys = keypair(512);
 
         this.publicKey = keys.public;
         this.privateKey = keys.private;
