@@ -307,6 +307,17 @@ class Init {
 
         });
         /**
+         * Main decode
+         */
+        this.socket.on('receive_message', function (data: string) {
+            var connection_data = JSON.parse(data);
+            if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('encrypted')) {
+                var message = self.auth.decrypt_received(connection_data.encrypted);
+                self.notify('success', message, 'New message');
+            }
+
+        });
+        /**
          * Sender make line
          */
         this.socket.on('make_line', function () {
@@ -320,9 +331,8 @@ class Init {
             self.addSendButton(function () {
                 var text = document.getElementById("chat_box").value;
                 var connection_data = { encrypted: "", to: "" };
-                connection_data.encrypted = self.auth.encrypt(text);
+                connection_data.encrypted = self.auth.encrypt(text, self.communicator.friend_pub_key);
                 connection_data.to = self.communicator.friend_user_id;
-                console.log(self.communicator);
                 self.socket.emit('send_message', JSON.stringify(connection_data));
             });
 
@@ -381,9 +391,9 @@ class Init {
                         alert('odbiorca alert');
                     });
                     self.addSendButton(function () {
-                        var text = document.getElementById("textarea").nodeValue;
-                        var encrypted = self.auth.encrypt(text);
-                        self.socket.emit('send_message_to_sender', encrypted);
+                        var text = document.getElementById("chat_box").value;
+                        var _connection_data = { encrypted: self.auth.encrypt(text), to: connection_data.from };
+                        self.socket.emit('send_message', JSON.stringify(_connection_data));
                     });
                     return true;
                 } else {

@@ -121,7 +121,14 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('send_message', function (data) {
-        console.log(JSON.parse(data));
+        if (users.isJson(data)) {
+            var connection_data = JSON.parse(data);
+            if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('encrypted')) {
+                console.log(connection_data.to);
+                socket.to(connection_data.to).emit('receive_message', data);
+            }
+        }
+
     });
 
     socket.on('handshake_failed', function (data) {

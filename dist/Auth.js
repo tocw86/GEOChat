@@ -13,17 +13,30 @@ var Auth = /** @class */ (function () {
     Auth.prototype.isEnabled = function () {
         return this.enabled;
     };
-    Auth.prototype.encrypt = function (plaintext) {
+    Auth.prototype.encrypt = function (plaintext, friend_pub_key) {
         if (!this.enabled)
             return plaintext;
-        var buffer = new buffer_1.Buffer(plaintext);
-        var encrypted = crypto.privateEncrypt(this.privateKey, buffer);
+        var buffer = new Buffer(plaintext);
+        var encrypted = crypto.publicEncrypt(friend_pub_key, buffer);
         return encrypted.toString('base64');
+    };
+    /**
+     * Received from friend
+     * @param  {string} cypher
+     * @param  {string} encrypted
+     * @returns string
+     */
+    Auth.prototype.decrypt_received = function (encrypted) {
+        if (!this.enabled)
+            return encrypted;
+        var buffer = Buffer.from(encrypted, 'base64');
+        var plaintext = crypto.privateDecrypt(this.getPrivateKey(), buffer);
+        return plaintext.toString('utf8');
     };
     Auth.prototype.decrypt = function (cypher) {
         if (!this.enabled)
             return cypher;
-        var buffer = buffer_1.Buffer.from(cypher, 'base64');
+        var buffer = Buffer.from(cypher, 'base64');
         var plaintext = crypto.publicDecrypt(this.publicKey, buffer);
         return plaintext.toString('utf8');
     };
