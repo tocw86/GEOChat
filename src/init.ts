@@ -26,9 +26,10 @@ class Init {
     };
     private defaultPosition = {
         coords: {
-
-            latitude: 53.6711111,
-            longitude: 20.784722222222225
+            latitude: 29.975715,
+            longitude: 31.137718
+            // latitude: 53.6711111,
+            // longitude: 20.784722222222225
             // latitude: 37.629562,
             //  longitude: -116.849556
         }
