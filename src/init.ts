@@ -520,8 +520,10 @@ class Init {
     private addSendButton = (callback: () => void): void => {
         var button = document.createElement('button');
         button.id = "send_button";
+        button.style.width = "100px";
+        button.style.height = "100px";
         button.innerHTML = "Send"
-        document.getElementById("status_toolbar").appendChild(button);
+        document.getElementById("console").appendChild(button);
         button.addEventListener("click", function () {
             callback();
         });
