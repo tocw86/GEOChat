@@ -26,12 +26,14 @@ class Init {
     };
     private defaultPosition = {
         coords: {
-            latitude: 29.975715,
-            longitude: 31.137718
-            // latitude: 53.6711111,
-            // longitude: 20.784722222222225
-            // latitude: 37.629562,
-            //  longitude: -116.849556
+            latitude: 53.77995,
+            longitude: 20.49416
+            //egipt latitude: 29.975715,
+            //egipt longitude: 31.137718
+            //pasym latitude: 53.6711111,
+            //pasym longitude: 20.784722222222225
+            //usa latitude: 37.629562,
+            //usa  longitude: -116.849556
         }
     };
     private markerType: string;
