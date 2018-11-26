@@ -347,11 +347,9 @@ class Init {
          * Sender make button disconnect
          */
         this.socket.on('make_button_disconnect', function () {
-
             self.makeButtonDisconnect(function () {
-                alert('nadawca alert');
+                console.log(self);
             });
-
         });
 
         /**
@@ -374,11 +372,9 @@ class Init {
 
                 if (confirm('Handshake from:' + connection_data.from)) {
                     self.enabled = false;
-
-                    self.communicator.sender_pub_key = connection_data.sender_pub_key;
+                    self.communicator.friend_pub_key = connection_data.sender_pub_key;
                     console.log('Zapisano klucz publiczny nadawcy');
                     connection_data.friend_pub_key = self.auth.getPublicKey();
-
                     self.socket.emit('handshake_success', JSON.stringify(connection_data));
 
                     self.receiver_line = L.polyline(connection_data.gps, {
@@ -392,7 +388,7 @@ class Init {
                     });
                     self.addSendButton(function () {
                         var text = document.getElementById("chat_box").value;
-                        var _connection_data = { encrypted: self.auth.encrypt(text), to: connection_data.from };
+                        var _connection_data = { encrypted: self.auth.encrypt(text, self.communicator.friend_pub_key), to: connection_data.from };
                         self.socket.emit('send_message', JSON.stringify(_connection_data));
                     });
                     return true;
