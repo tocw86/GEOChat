@@ -26,10 +26,10 @@ class Init {
     };
     private defaultPosition = {
         coords: {
-            // latitude: 51.1739726374,
-            // longitude: -1.82237671048
-            latitude: 37.629562,
-            longitude: -116.849556
+            latitude: 51.1739726374,
+            longitude: -1.82237671048
+            // latitude: 37.629562,
+            //  longitude: -116.849556
         }
     };
     private markerType: string;
