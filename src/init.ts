@@ -275,7 +275,7 @@ class Init {
 
         div.appendChild(button);
         button.addEventListener("click", function () {
-            callback();
+            //callback();
             window.location.href = "/";
         });
     }
@@ -314,6 +314,7 @@ class Init {
             if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('encrypted')) {
                 var message = self.auth.decrypt_received(connection_data.encrypted);
                 self.notify('success', message, 'New message');
+                alert(message);
             }
 
         });
@@ -348,7 +349,7 @@ class Init {
          */
         this.socket.on('make_button_disconnect', function () {
             self.makeButtonDisconnect(function () {
-                console.log(self);
+                //console.log(self);
             });
         });
 
@@ -384,7 +385,7 @@ class Init {
                     }).addTo(self.map);
                     self.notify('info', 'Private Room', 'Connected to user');
                     self.makeButtonDisconnect(function () {
-                        alert('odbiorca alert');
+                        // alert('odbiorca alert');
                     });
                     self.addSendButton(function () {
                         var text = document.getElementById("chat_box").value;
