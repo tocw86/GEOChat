@@ -40,7 +40,8 @@ var Init = /** @class */ (function () {
          * @return void
          */
         this.sendUserData = function () {
-            _this.socket.emit('new_user', _this.user.getJsonFromUser());
+            var data = _this.user.getJsonFromUser();
+            _this.socket.emit('new_user', data);
         };
         /**
          * Factory for load users

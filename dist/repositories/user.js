@@ -7,8 +7,8 @@ var User;
             this.enabled = true;
             this.user_id = id;
             this.enabled = true;
-            this.lat = position.coords.lat;
-            this.lng = position.coords.lng;
+            this.lat = position.coords.latitude;
+            this.lng = position.coords.longitude;
             this.markerType = markerType;
         }
         User.prototype.setLng = function (lng) {
@@ -26,11 +26,11 @@ var User;
          */
         User.prototype.getJsonFromUser = function () {
             return JSON.stringify({
-                lat: this.lat,
-                lng: this.lng,
-                user_id: this.user_id,
-                markerType: this.markerType,
-                enabled: this.enabled
+                lat: this.getLat(),
+                lng: this.getLng(),
+                user_id: this.getUserId(),
+                markerType: this.getMarkerType(),
+                enabled: true
             });
         };
         User.prototype.isMoving = function () {

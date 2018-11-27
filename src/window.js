@@ -50,7 +50,7 @@
 
                         document.getElementById('m_container').innerHTML = '';
                         var ta = document.createElement('div');
-                        ta.innerHTML = '<textarea rows="10" data-role="textarea" id="chat_box" data-auto-size="true" data-max-height="400" data-prepend="<span class=\'mif-bubbles\'></span>">Hello: ' + id + '</textarea>';
+                        ta.innerHTML = '<textarea rows="3" data-role="textarea" id="chat_box" data-auto-size="true" data-max-height="400" data-prepend="<span class=\'mif-bubbles\'></span>">Hello: ' + id + '</textarea>';
 
                         document.getElementById('m_container').appendChild(ta);
 

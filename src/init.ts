@@ -46,7 +46,6 @@ class Init {
     */
     public run = (position: any) => {
 
-
         this.sendUserData();
 
         this.auth = new this.auth(this.user.getUserId());
@@ -79,7 +78,8 @@ class Init {
      * @return void
      */
     private sendUserData = (): void => {
-        this.socket.emit('new_user', this.user.getJsonFromUser());
+        var data = this.user.getJsonFromUser();
+        this.socket.emit('new_user', data);
     }
 
     /**

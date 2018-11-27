@@ -88,6 +88,7 @@ io.sockets.on('connection', function (socket) {
         if (allUsers.length > 0) {
             socket.emit('load_users', JSON.stringify(allUsers));
         }
+        console.log(data);
 
         //user
         var user = {

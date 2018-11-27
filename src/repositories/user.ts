@@ -13,8 +13,8 @@ namespace User {
         constructor(id: string, position: any, markerType: string) {
             this.user_id = id;
             this.enabled = true;
-            this.lat = position.coords.lat;
-            this.lng = position.coords.lng;
+            this.lat = position.coords.latitude;
+            this.lng = position.coords.longitude;
             this.markerType = markerType;
         }
 
@@ -35,11 +35,11 @@ namespace User {
          */
         public getJsonFromUser(): string {
             return JSON.stringify({
-                lat: this.lat,
-                lng: this.lng,
-                user_id: this.user_id,
-                markerType: this.markerType,
-                enabled: this.enabled
+                lat: this.getLat(),
+                lng: this.getLng(),
+                user_id: this.getUserId(),
+                markerType: this.getMarkerType(),
+                enabled: true
             });
         }
 
