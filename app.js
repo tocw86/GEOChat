@@ -31,6 +31,15 @@ app.get('/fontawesome-all.css', function (req, res) {
 app.get('/bg.jpg', function (req, res) {
     res.sendFile(__dirname + '/assets/img/bg.jpg');
 });
+app.get('/notify.js', function (req, res) {
+    res.sendFile(__dirname + '/dist/repositories/notify.js');
+});
+app.get('/map.js', function (req, res) {
+    res.sendFile(__dirname + '/dist/repositories/map.js');
+});
+app.get('/communicator.js', function (req, res) {
+    res.sendFile(__dirname + '/dist/repositories/comunicator.js');
+});
 app.get('/init.js', function (req, res) {
     res.sendFile(__dirname + '/dist/init.js');
 });

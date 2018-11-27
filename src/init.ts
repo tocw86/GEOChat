@@ -1,11 +1,7 @@
 class Init {
     private auth: any;
-    private moving: boolean = true;
-    private token: string = 'pk.eyJ1IjoidG9jdzg2IiwiYSI6ImNqaHM0YTh2bzA3bDUzN254Mndyb2c4dm0ifQ.3eIb7F5PV-E6pBugRhs4cQ';
-    private lat: number;
-    private lng: number;
-    private user_id: string;
-    private map: any;
+    private map: Map.Map;
+    private user: User.User;
     private socket: any;
     private marker: any;
     private usersMarkers: Array<any> = [];
@@ -23,25 +19,11 @@ class Init {
             shadowUrl: 'marker-shadow.png',
         }),
     };
-    private defaultPosition = {
-        coords: {
-            latitude: 53.77995,
-            longitude: 20.49416
-            //egipt latitude: 29.975715,
-            //egipt longitude: 31.137718
-            //pasym latitude: 53.6711111,
-            //pasym longitude: 20.784722222222225
-            //usa latitude: 37.629562,
-            //usa  longitude: -116.849556
-        }
-    };
-    private markerType: string;
-    private enabled: boolean = true;
     private sender_line: L.Polyline<GeoJSON.LineString | GeoJSON.MultiLineString, any>;
     private receiver_line: L.Polyline<GeoJSON.LineString | GeoJSON.MultiLineString, any>;
     private communicator: Comunicator.Comunicator;
     private notify: Notify.Notify;
-    private connected: boolean = true;
+
 
 
     /**
@@ -52,13 +34,14 @@ class Init {
     constructor(socket: any, markerType: string, auth: any) {
         this.auth = auth;
         this.socket = socket;
-        this.markerType = markerType;
         this.communicator = new Comunicator.Comunicator();
         this.notify = new Notify.Notify();
+        this.map = new Map.Map();
+        this.user = new User.User(this.socket.id, this.map.getDefaultPosition(), markerType);
     }
 
     public start = () => {
-        this.run(this.defaultPosition);
+        this.run(this.map.getDefaultPosition());
     }
 
     /**
@@ -66,13 +49,10 @@ class Init {
     */
     public run = (position: any) => {
 
-        this.setUserDate(position)
 
         this.sendUserData();
 
-        this.auth = new this.auth(this.user_id);
-
-        this.initMap();
+        this.auth = new this.auth(this.user.getUserId());
 
         this.mapEvents();
 
@@ -93,58 +73,16 @@ class Init {
             //self.socket.emit('remove_user', self.user_id);
         });
 
-
-
-
     }
 
-    /**
-     * get random string
-     * 
-     * @param len 
-     * @param charSet 
-     */
-    private randomString(len: number, charSet?: string): string {
-        charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-        var randomString = '';
-        for (var i = 0; i < len; i++) {
-            var randomPoz = Math.floor(Math.random() * charSet.length);
-            randomString += charSet.substring(randomPoz, randomPoz + 1);
-        }
-        return randomString;
-    }
 
-    /**
-     * Set user safe data
-     * @return void
-     */
-    private setUserDate = (position: any): void => {
-        this.lat = position.coords.latitude;
-        this.lng = position.coords.longitude;
-        this.user_id = this.socket.id;
-        this.enabled = true;
-    }
-
-    /**
-     * Get user data in json format
-     * @return string
-     */
-    private getJsonFromUser = (): string => {
-        return JSON.stringify({
-            lat: this.lat,
-            lng: this.lng,
-            user_id: this.user_id,
-            markerType: this.markerType,
-            enabled: this.enabled
-        });
-    }
 
     /**
      * Send user data to socket
      * @return void
      */
     private sendUserData = (): void => {
-        this.socket.emit('new_user', this.getJsonFromUser());
+        this.socket.emit('new_user', this.user.getJsonFromUser());
     }
 
     /**
@@ -158,7 +96,7 @@ class Init {
     private markerFactory = (lat: number, lng: number, user_id: string, markerType: string): any => {
         var self = this;
         var icon = this.icons[markerType];
-        var marker = L.marker([lat, lng], { icon: icon }).addTo(this.map).on('click', function (event: any) {
+        var marker = L.marker([lat, lng], { icon: icon }).addTo(this.map.getMap()).on('click', function (event: any) {
 
             var $this = this;
             setTimeout(function () {
@@ -235,7 +173,7 @@ class Init {
             this.notify.makeNotify("error", "Disconnected please refresh page", "Error");
             this.connected = false;
             this.cleanAllMarkers();
-            this.disableMap();
+            this.map.disableMap();
             this.disableUser();
             this.changeStatusHtml();
             return false;
@@ -287,7 +225,7 @@ class Init {
                     color: 'red',
                     opacity: 1,
                     weight: 2
-                }).addTo(self.map);
+                }).addTo(self.map.getMap());
 
             }
 
@@ -314,7 +252,7 @@ class Init {
                 color: 'green'
             });
 
-            self.map.closePopup();
+            self.map.getMap().closePopup();
             self.addSendButton(function () {
                 var text = document.getElementById("chat_box").value;
                 var connection_data = { encrypted: "", to: "" };
@@ -344,7 +282,7 @@ class Init {
          */
         this.socket.on('remove_line', function () {
             self.notify.makeNotify('error', 'Private Room', 'Friend refuse invitation');
-            self.map.removeLayer(self.sender_line);
+            self.map.getMap().removeLayer(self.sender_line);
             self.enabled = true;
             self.moving = true;
         });
@@ -368,7 +306,7 @@ class Init {
                         color: 'green',
                         opacity: 1,
                         weight: 2
-                    }).addTo(self.map);
+                    }).addTo(self.map.getMap());
                     self.notify.makeNotify('info', 'Private Room', 'Connected to user');
                     self.makeButtonDisconnect(function () {
                         // alert('odbiorca alert');
@@ -471,23 +409,6 @@ class Init {
 
     }
 
-    private disableMap = (): void => {
-        this.map.scrollWheelZoom.disable()
-        this.map.dragging.disable()
-        this.map.touchZoom.disable()
-        this.map.doubleClickZoom.disable()
-        this.map.boxZoom.disable()
-        this.map.keyboard.disable()
-
-        if (this.map.tap)
-            this.map.tap.disable()
-
-        this.map._handlers.forEach(function (handler: any) {
-            handler.disable();
-
-        });
-    }
-
     private disableUser = (): void => {
         this.enabled = false;
         this.moving = false;
@@ -516,28 +437,12 @@ class Init {
     }
 
     /**
-     * Init map
-     */
-    private initMap = (): void => {
-
-        this.map = L.map('map').setView([this.lat, this.lng], 14);
-
-        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + this.token, {
-            attribution: '',
-            maxZoom: 16,
-            id: "mapbox.streets-satellite",
-            accessToken: this.token
-        }).addTo(this.map);
-
-    }
-
-    /**
      * Set user marker
      * @return void
      */
     private setUserMarker = (): void => {
         var item = this.icons[this.markerType];
-        this.marker = L.marker([this.lat, this.lng], { icon: item }).addTo(this.map);
+        this.marker = L.marker([this.lat, this.lng], { icon: item }).addTo(this.map.getMap());
     }
 
 
@@ -547,7 +452,7 @@ class Init {
      */
     private mapEvents = (): void => {
         var self = this;
-        this.map.on('click', function (event: any) {
+        this.map.getMap().on('click', function (event: any) {
 
             self.isConnected();
 

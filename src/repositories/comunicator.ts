@@ -48,7 +48,7 @@ namespace Comunicator {
         }
 
         public getFriendId(): string {
-            return this.getFriendId();
+            return this.friendId;
         }
 
     }

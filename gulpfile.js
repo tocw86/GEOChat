@@ -7,7 +7,6 @@ var sass = require('gulp-sass');
 var minifyCSS = require('gulp-clean-css');
 var autoprefixer = require('gulp-autoprefixer');
 
-
 //Sass
 gulp.task('sass', function () {
     return gulp.src([
