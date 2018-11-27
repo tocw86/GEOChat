@@ -206,6 +206,7 @@ var Init = /** @class */ (function () {
                     if (confirm('Handshake from:' + connection_data.from)) {
                         self.user.disable();
                         self.communicator.setFriendPublicKey(connection_data.sender_pub_key);
+                        self.communicator.setFriendId(connection_data.from);
                         console.log('Zapisano klucz publiczny nadawcy');
                         connection_data.friend_pub_key = self.auth.getPublicKey();
                         self.socket.emit('handshake_success', JSON.stringify(connection_data));
