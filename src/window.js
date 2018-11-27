@@ -50,11 +50,12 @@
 
                         document.getElementById('m_container').innerHTML = '';
                         var ta = document.createElement('div');
-                        ta.innerHTML = '<textarea rows="3" data-role="textarea" id="chat_box" data-auto-size="true" data-max-height="400" data-prepend="<span class=\'mif-bubbles\'></span>">Hello: ' + id + '</textarea>';
+                        ta.style.display = "flex";
+                        ta.id = "chat_container";
+                        // ta.innerHTML = '<textarea rows="3" data-role="textarea" id="chat_box" data-auto-size="true" data-max-height="400" data-prepend="<span class=\'mif-bubbles\'></span>">Hello: ' + id + '</textarea>';
+                        ta.innerHTML = '<input type="text" id="chat_box" value="Hello: ' + id + '" style="width:85%"/>';
 
                         document.getElementById('m_container').appendChild(ta);
-
-
                         notify('success', 'Connected', 'Status');
                     } else {
                         notify('error', 'Disconnected', 'Status');
@@ -62,8 +63,9 @@
 
                 });
 
-                var elt = new Init(socket, attr, auth);
+              
                 socket.on('connect', function () {
+                    var elt = new Init(socket, attr, auth);
                     elt.start();
                 });
 

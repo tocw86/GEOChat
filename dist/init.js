@@ -153,8 +153,7 @@ var Init = /** @class */ (function () {
                 var connection_data = JSON.parse(data);
                 if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('encrypted')) {
                     var message = self.auth.decrypt_received(connection_data.encrypted);
-                    self.notify.makeNotify('success', message, 'New message');
-                    alert(message);
+                    self.notify.makeNotify('info', message, self.communicator.getFriendId());
                 }
             });
             /**
@@ -172,6 +171,8 @@ var Init = /** @class */ (function () {
                     connection_data.encrypted = self.auth.encrypt(text, self.communicator.getFriendPublicKey());
                     connection_data.to = self.communicator.getFriendId();
                     self.socket.emit('send_message', JSON.stringify(connection_data));
+                    document.getElementById("chat_box").value = null;
+                    self.notify.makeNotify('notify', text, self.user.getUserId(), "topRight");
                 });
             });
             _this.socket.on('save_friend_key', function (friend_pub_key) {
@@ -221,6 +222,8 @@ var Init = /** @class */ (function () {
                             var text = document.getElementById("chat_box").value;
                             var _connection_data = { encrypted: self.auth.encrypt(text, self.communicator.getFriendPublicKey()), to: connection_data.from };
                             self.socket.emit('send_message', JSON.stringify(_connection_data));
+                            document.getElementById("chat_box").value = null;
+                            self.notify.makeNotify('notify', text, self.user.getUserId(), "topRight");
                         });
                         return true;
                     }
@@ -309,10 +312,9 @@ var Init = /** @class */ (function () {
         this.addSendButton = function (callback) {
             var button = document.createElement('button');
             button.id = "send_button";
-            button.style.width = "100px";
-            button.style.height = "100px";
+            button.style.width = "15%";
             button.innerHTML = "Send";
-            document.getElementById("console").appendChild(button);
+            document.getElementById("chat_container").appendChild(button);
             button.addEventListener("click", function () {
                 callback();
             });
@@ -352,7 +354,7 @@ var Init = /** @class */ (function () {
         this.communicator = new Comunicator.Comunicator();
         this.notify = new Notify.Notify();
         this.map = new Map.Map();
-        this.user = new User.User(this.socket.id, this.map.getDefaultPosition(), markerType);
+        this.user = new User.User(socket.id, this.map.getDefaultPosition(), markerType);
     }
     /**
      * Trigger window events

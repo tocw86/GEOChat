@@ -12,11 +12,12 @@ var Notify;
          * @param  {string} title
          * @returns void
          */
-        Notify.prototype.makeNotify = function (type, text, title) {
+        Notify.prototype.makeNotify = function (type, text, title, position) {
             vNotify[type]({
                 text: text,
                 title: title,
-                sticky: true
+                sticky: true,
+                position: position || "topRight"
             });
         };
         return Notify;
