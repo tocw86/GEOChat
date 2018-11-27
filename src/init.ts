@@ -3,7 +3,6 @@ class Init {
     private map: Map.Map;
     private user: User.User;
     private socket: any;
-    private marker: any;
     private usersMarkers: Array<any> = [];
     private icons: any = {
         red: L.icon({
@@ -23,8 +22,6 @@ class Init {
     private receiver_line: L.Polyline<GeoJSON.LineString | GeoJSON.MultiLineString, any>;
     private communicator: Comunicator.Comunicator;
     private notify: Notify.Notify;
-
-
 
     /**
      * Start
@@ -120,25 +117,25 @@ class Init {
      */
     private startHandshake = (user_id: string, $this: any): void => {
 
-        if (this.moving) {
+        if (this.user.isMoving()) {
 
             this.communicator.setMyContext(this);
             this.communicator.setFriendContext($this);
 
             var friend_position = $this.getLatLng();
-            var my_position = this.marker.getLatLng();
+            var my_position = this.user.getMarker().getLatLng();
 
             var distance = this.calculateDistance(my_position.lat, friend_position.lat, my_position.lng, friend_position.lng);
 
             if (distance < 3000) {
 
                 //block moving
-                this.moving = false;
+                this.user.stopMoving();
                 this.communicator.setMyContext(this);
                 this.communicator.setFriendContext($this);
                 this.communicator.setFriendId(user_id);
                 //comunicate to friend
-                this.socket.emit('start_connect', JSON.stringify({ to: user_id, from: this.user_id, gps: [[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]], sender_pub_key: this.auth.getPublicKey() }));
+                this.socket.emit('start_connect', JSON.stringify({ to: user_id, from: this.user.getUserId(), gps: [[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]], sender_pub_key: this.auth.getPublicKey() }));
 
             } else {
                 alert("To far to make connection (" + distance + " m). Min. distance 3000m");
@@ -167,17 +164,17 @@ class Init {
      * Check if user is connect
      */
     private isConnected = (): boolean => {
-        if (this.connected && this.socket.connected) {
+        if (this.user.isConnected() && this.socket.connected) {
             return true;
-        } else if (this.connected && !this.socket.connected) {
+        } else if (this.user.isConnected() && !this.socket.connected) {
             this.notify.makeNotify("error", "Disconnected please refresh page", "Error");
-            this.connected = false;
+            this.user.disconnect();
             this.cleanAllMarkers();
             this.map.disableMap();
             this.disableUser();
             this.changeStatusHtml();
             return false;
-        } else if (!this.connected && !this.socket.connected) {
+        } else if (!this.user.isConnected() && !this.socket.connected) {
             return false;
         }
 
@@ -219,7 +216,7 @@ class Init {
             if (flag) {
 
                 var friend_position = self.communicator.getFriendContext().getLatLng();
-                var my_position = self.marker.getLatLng();
+                var my_position = self.user.getMarker().getLatLng();
 
                 self.sender_line = L.polyline([[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]], {
                     color: 'red',
@@ -283,8 +280,8 @@ class Init {
         this.socket.on('remove_line', function () {
             self.notify.makeNotify('error', 'Private Room', 'Friend refuse invitation');
             self.map.getMap().removeLayer(self.sender_line);
-            self.enabled = true;
-            self.moving = true;
+            self.user.setEnable();
+            self.user.startMoving();
         });
 
         /**
@@ -292,11 +289,11 @@ class Init {
          */
         this.socket.on('handshake', function (data: string) {
             var connection_data = JSON.parse(data);
-            if (connection_data.to == self.user_id && self.moving) {
-                self.moving = false;
+            if (connection_data.to == self.user.getUserId() && self.user.isMoving()) {
+                self.user.stopMoving();
 
                 if (confirm('Handshake from:' + connection_data.from)) {
-                    self.enabled = false;
+                    self.user.disable();
                     self.communicator.setFriendPublicKey(connection_data.sender_pub_key);
                     console.log('Zapisano klucz publiczny nadawcy');
                     connection_data.friend_pub_key = self.auth.getPublicKey();
@@ -318,8 +315,8 @@ class Init {
                     });
                     return true;
                 } else {
-                    self.moving = true;
-                    self.enabled = true;
+                    self.user.startMoving();
+                    self.user.setEnable();
                     self.socket.emit('handshake_failed', data);
                     self.notify.makeNotify('error', 'Private Room', 'Refused invitation');
                     return false;
@@ -335,7 +332,7 @@ class Init {
             var data = JSON.parse(usersData);
 
             for (var i = 0; i < data.length; i++) {
-                if (data[i].user_id != self.user_id && data[i].enabled) {
+                if (data[i].user_id != self.user.getUserId() && data[i].enabled) {
                     var marker = self.markerFactory(data[i].lat, data[i].lng, data[i].user_id, data[i].markerType);
                     self.usersMarkers.push(
                         {
@@ -355,7 +352,7 @@ class Init {
         this.socket.on('load_user', function (usersData: string) {
             var data = JSON.parse(usersData);
 
-            if (data.user_id != self.user_id) {
+            if (data.user_id != self.user.getUserId()) {
 
                 var marker = self.markerFactory(data.lat, data.lng, data.user_id, data.markerType);
 
@@ -405,13 +402,13 @@ class Init {
         for (var i = 0; i < this.usersMarkers.length; i++) {
             this.usersMarkers[i].marker.remove();
         }
-        this.marker.remove();
+        this.user.getMarker().remove();
 
     }
 
     private disableUser = (): void => {
-        this.enabled = false;
-        this.moving = false;
+        this.user.disable();
+        this.user.stopMoving();
     }
 
 
@@ -441,8 +438,8 @@ class Init {
      * @return void
      */
     private setUserMarker = (): void => {
-        var item = this.icons[this.markerType];
-        this.marker = L.marker([this.lat, this.lng], { icon: item }).addTo(this.map.getMap());
+        var item = this.icons[this.user.getMarkerType()];
+        this.user.setMarker(L.marker([this.user.getLat(), this.user.getLng()], { icon: item }).addTo(this.map.getMap()));
     }
 
 
@@ -456,11 +453,11 @@ class Init {
 
             self.isConnected();
 
-            if (typeof self.marker != 'undefined' && self.moving && self.isConnected()) {
-                self.lat = event.latlng.lat;
-                self.lng = event.latlng.lng;
+            if (typeof self.user.getMarker() != 'undefined' && self.user.isMoving() && self.isConnected()) {
+                self.user.setLat(event.latlng.lat);
+                self.user.setLng(event.latlng.lng);
 
-                self.marker.setLatLng(event.latlng);
+                self.user.getMarker().setLatLng(event.latlng);
                 self.updateUserData();
 
             }
@@ -472,7 +469,7 @@ class Init {
      * Send update data to socket
      */
     private updateUserData = () => {
-        this.socket.emit('update_user', this.getJsonFromUser());
+        this.socket.emit('update_user', this.user.getJsonFromUser());
     }
 
 }

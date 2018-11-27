@@ -34,6 +34,9 @@ app.get('/bg.jpg', function (req, res) {
 app.get('/notify.js', function (req, res) {
     res.sendFile(__dirname + '/dist/repositories/notify.js');
 });
+app.get('/user.js', function (req, res) {
+    res.sendFile(__dirname + '/dist/repositories/user.js');
+});
 app.get('/map.js', function (req, res) {
     res.sendFile(__dirname + '/dist/repositories/map.js');
 });

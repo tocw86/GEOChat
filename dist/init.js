@@ -1,1 +1,384 @@
-var Init=function(){function e(e,t,n){var s=this;this.moving=!0,this.usersMarkers=[],this.icons={red:L.icon({iconUrl:"marker-icon-red.png",shadowUrl:"marker-shadow.png"}),green:L.icon({iconUrl:"marker-icon-green.png",shadowUrl:"marker-shadow.png"}),blue:L.icon({iconUrl:"marker-icon.png",shadowUrl:"marker-shadow.png"})},this.enabled=!0,this.connected=!0,this.start=function(){s.run(s.map.getDefaultPosition())},this.run=function(e){s.setUserDate(e),s.sendUserData(),s.auth=new s.auth(s.user_id),s.mapEvents(),s.setUserMarker(),s.windowEvents(),s.triggerSocketEvents()},this.setUserDate=function(e){s.lat=e.coords.latitude,s.lng=e.coords.longitude,s.user_id=s.socket.id,s.enabled=!0},this.getJsonFromUser=function(){return JSON.stringify({lat:s.lat,lng:s.lng,user_id:s.user_id,markerType:s.markerType,enabled:s.enabled})},this.sendUserData=function(){s.socket.emit("new_user",s.getJsonFromUser())},this.markerFactory=function(e,t,n,r){var o=s,a=s.icons[r],i=L.marker([e,t],{icon:a}).addTo(s.map.getMap()).on("click",function(e){var t=this;setTimeout(function(){document.getElementById(n).addEventListener("click",function(e){o.startHandshake(n,t)})},50)});return i.bindPopup("<p>"+n+'<br/><button id="'+n+'">Handshake</button></p>'),i},this.startHandshake=function(e,t){if(s.moving){s.communicator.setMyContext(s),s.communicator.setFriendContext(t);var n=t.getLatLng(),r=s.marker.getLatLng(),o=s.calculateDistance(r.lat,n.lat,r.lng,n.lng);o<3e3?(s.moving=!1,s.communicator.setMyContext(s),s.communicator.setFriendContext(t),s.communicator.setFriendId(e),s.socket.emit("start_connect",JSON.stringify({to:e,from:s.user_id,gps:[[n.lat,n.lng],[r.lat,r.lng]],sender_pub_key:s.auth.getPublicKey()}))):alert("To far to make connection ("+o+" m). Min. distance 3000m")}},this.calculateDistance=function(e,t,n,r){var o=.017453292519943295,a=Math.cos,i=.5-a((e-t)*o)/2+a(t*o)*a(e*o)*(1-a((n-r)*o))/2,s=12742*Math.asin(Math.sqrt(i));return Math.round(1e3*s)},this.isConnected=function(){return!(!s.connected||!s.socket.connected)||(s.connected&&!s.socket.connected?(s.notify.makeNotify("error","Disconnected please refresh page","Error"),s.connected=!1,s.cleanAllMarkers(),s.map.disableMap(),s.disableUser(),s.changeStatusHtml(),!1):!(!s.connected&&!s.socket.connected)&&void 0)},this.triggerSocketEvents=function(){var o=s;s.socket.on("draw_line",function(e){if(e){var t=o.communicator.getFriendContext().getLatLng(),n=o.marker.getLatLng();o.sender_line=L.polyline([[t.lat,t.lng],[n.lat,n.lng]],{color:"red",opacity:1,weight:2}).addTo(o.map.getMap())}}),s.socket.on("receive_message",function(e){var t=JSON.parse(e);if(t.hasOwnProperty("to")&&t.hasOwnProperty("encrypted")){var n=o.auth.decrypt_received(t.encrypted);o.notify.makeNotify("success",n,"New message"),alert(n)}}),s.socket.on("make_line",function(){o.notify.makeNotify("info","Private Room","Connected to user"),o.sender_line.setStyle({color:"green"}),o.map.getMap().closePopup(),o.addSendButton(function(){var e=document.getElementById("chat_box").value,t={encrypted:"",to:""};t.encrypted=o.auth.encrypt(e,o.communicator.getFriendPublicKey()),t.to=o.communicator.getFriendId(),o.socket.emit("send_message",JSON.stringify(t))})}),s.socket.on("save_friend_key",function(e){o.communicator.setFriendPublicKey(e),console.log("Zapisano klucz publiczny odbiorcy")}),s.socket.on("make_button_disconnect",function(){o.makeButtonDisconnect(function(){})}),s.socket.on("remove_line",function(){o.notify.makeNotify("error","Private Room","Friend refuse invitation"),o.map.getMap().removeLayer(o.sender_line),o.enabled=!0,o.moving=!0}),s.socket.on("handshake",function(e){var n=JSON.parse(e);if(n.to==o.user_id&&o.moving)return o.moving=!1,confirm("Handshake from:"+n.from)?(o.enabled=!1,o.communicator.setFriendPublicKey(n.sender_pub_key),console.log("Zapisano klucz publiczny nadawcy"),n.friend_pub_key=o.auth.getPublicKey(),o.socket.emit("handshake_success",JSON.stringify(n)),o.receiver_line=L.polyline(n.gps,{color:"green",opacity:1,weight:2}).addTo(o.map.getMap()),o.notify.makeNotify("info","Private Room","Connected to user"),o.makeButtonDisconnect(function(){}),o.addSendButton(function(){var e=document.getElementById("chat_box").value,t={encrypted:o.auth.encrypt(e,o.communicator.getFriendPublicKey()),to:n.from};o.socket.emit("send_message",JSON.stringify(t))}),!0):(o.moving=!0,o.enabled=!0,o.socket.emit("handshake_failed",e),o.notify.makeNotify("error","Private Room","Refused invitation"),!1)}),s.socket.on("load_users",function(e){for(var t=JSON.parse(e),n=0;n<t.length;n++)if(t[n].user_id!=o.user_id&&t[n].enabled){var r=o.markerFactory(t[n].lat,t[n].lng,t[n].user_id,t[n].markerType);o.usersMarkers.push({user_id:t[n].user_id,marker:r,enabled:t[n].enabled})}}),s.socket.on("load_user",function(e){var t=JSON.parse(e);if(t.user_id!=o.user_id){var n=o.markerFactory(t.lat,t.lng,t.user_id,t.markerType);o.usersMarkers.push({user_id:t.user_id,marker:n,enabled:t.enabled})}}),s.socket.on("move_marker",function(e){for(var t=JSON.parse(e),n=0;n<o.usersMarkers.length;n++)t.user_id==o.usersMarkers[n].user_id&&o.usersMarkers[n].marker.setLatLng({lat:t.lat,lng:t.lng})}),s.socket.on("remove_marker",function(e){for(var t=0;t<o.usersMarkers.length;t++)e==o.usersMarkers[t].user_id&&o.usersMarkers[t].marker.remove()})},this.cleanAllMarkers=function(){for(var e=0;e<s.usersMarkers.length;e++)s.usersMarkers[e].marker.remove();s.marker.remove()},this.disableUser=function(){s.enabled=!1,s.moving=!1},this.changeStatusHtml=function(){document.getElementById("status_toolbar").innerHTML='  <i class="fas fa-ban danger"></i>&nbsp;disconnected'},this.addSendButton=function(e){var t=document.createElement("button");t.id="send_button",t.style.width="100px",t.style.height="100px",t.innerHTML="Send",document.getElementById("console").appendChild(t),t.addEventListener("click",function(){e()})},this.setUserMarker=function(){var e=s.icons[s.markerType];s.marker=L.marker([s.lat,s.lng],{icon:e}).addTo(s.map.getMap())},this.mapEvents=function(){var t=s;s.map.getMap().on("click",function(e){t.isConnected(),void 0!==t.marker&&t.moving&&t.isConnected()&&(t.lat=e.latlng.lat,t.lng=e.latlng.lng,t.marker.setLatLng(e.latlng),t.updateUserData())})},this.updateUserData=function(){s.socket.emit("update_user",s.getJsonFromUser())},this.auth=n,this.socket=e,this.markerType=t,this.communicator=new Comunicator.Comunicator,this.notify=new Notify.Notify,this.map=new Map.Map}return e.prototype.windowEvents=function(){window.addEventListener("beforeunload",function(e){})},e.prototype.randomString=function(e,t){t=t||"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";for(var n="",r=0;r<e;r++){var o=Math.floor(Math.random()*t.length);n+=t.substring(o,o+1)}return n},e.prototype.makeButtonDisconnect=function(e){var t=document.createElement("div");t.setAttribute("class","d-b"),document.getElementById("console").appendChild(t);var n=document.createElement("button");n.innerHTML="Disconnect",t.appendChild(n),n.addEventListener("click",function(){window.location.href="/"})},e}();
+var Init = /** @class */ (function () {
+    /**
+     * Start
+     *
+     * @param socket Socket.io
+     */
+    function Init(socket, markerType, auth) {
+        var _this = this;
+        this.usersMarkers = [];
+        this.icons = {
+            red: L.icon({
+                iconUrl: 'marker-icon-red.png',
+                shadowUrl: 'marker-shadow.png',
+            }),
+            green: L.icon({
+                iconUrl: 'marker-icon-green.png',
+                shadowUrl: 'marker-shadow.png',
+            }),
+            blue: L.icon({
+                iconUrl: 'marker-icon.png',
+                shadowUrl: 'marker-shadow.png',
+            }),
+        };
+        this.start = function () {
+            _this.run(_this.map.getDefaultPosition());
+        };
+        /**
+        * Run after get geo action
+        */
+        this.run = function (position) {
+            _this.sendUserData();
+            _this.auth = new _this.auth(_this.user.getUserId());
+            _this.mapEvents();
+            _this.setUserMarker();
+            _this.windowEvents();
+            _this.triggerSocketEvents();
+        };
+        /**
+         * Send user data to socket
+         * @return void
+         */
+        this.sendUserData = function () {
+            _this.socket.emit('new_user', _this.user.getJsonFromUser());
+        };
+        /**
+         * Factory for load users
+         * @param lat
+         * @param lng
+         * @param user_id
+         * @returns marker
+         */
+        this.markerFactory = function (lat, lng, user_id, markerType) {
+            var self = _this;
+            var icon = _this.icons[markerType];
+            var marker = L.marker([lat, lng], { icon: icon }).addTo(_this.map.getMap()).on('click', function (event) {
+                var $this = this;
+                setTimeout(function () {
+                    document.getElementById(user_id).addEventListener('click', function (e) {
+                        self.startHandshake(user_id, $this);
+                    });
+                }, 50);
+            });
+            marker.bindPopup('<p>' + user_id + '<br/><button id="' + user_id + '">Handshake</button></p>');
+            return marker;
+        };
+        /**
+         * Begin handshake
+         *
+         * @param  {string} user_id
+         * @param  {any} $this
+         * @returns void
+         */
+        this.startHandshake = function (user_id, $this) {
+            if (_this.user.isMoving()) {
+                _this.communicator.setMyContext(_this);
+                _this.communicator.setFriendContext($this);
+                var friend_position = $this.getLatLng();
+                var my_position = _this.user.getMarker().getLatLng();
+                var distance = _this.calculateDistance(my_position.lat, friend_position.lat, my_position.lng, friend_position.lng);
+                if (distance < 3000) {
+                    //block moving
+                    _this.user.stopMoving();
+                    _this.communicator.setMyContext(_this);
+                    _this.communicator.setFriendContext($this);
+                    _this.communicator.setFriendId(user_id);
+                    //comunicate to friend
+                    _this.socket.emit('start_connect', JSON.stringify({ to: user_id, from: _this.user.getUserId(), gps: [[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]], sender_pub_key: _this.auth.getPublicKey() }));
+                }
+                else {
+                    alert("To far to make connection (" + distance + " m). Min. distance 3000m");
+                }
+            }
+        };
+        /**
+         * Return distance
+         * @param  {number} lat1
+         * @param  {number} lat2
+         * @param  {number} long1
+         * @param  {number} long2
+         */
+        this.calculateDistance = function (lat1, lat2, long1, long2) {
+            var p = 0.017453292519943295; // Math.PI / 180
+            var c = Math.cos;
+            var a = 0.5 - c((lat1 - lat2) * p) / 2 + c(lat2 * p) * c((lat1) * p) * (1 - c(((long1 - long2) * p))) / 2;
+            var dis = (12742 * Math.asin(Math.sqrt(a))); // 2 * R; R = 6371 km
+            return Math.round(dis * 1000); //distance m
+        };
+        /**
+         * Check if user is connect
+         */
+        this.isConnected = function () {
+            if (_this.user.isConnected() && _this.socket.connected) {
+                return true;
+            }
+            else if (_this.user.isConnected() && !_this.socket.connected) {
+                _this.notify.makeNotify("error", "Disconnected please refresh page", "Error");
+                _this.user.disconnect();
+                _this.cleanAllMarkers();
+                _this.map.disableMap();
+                _this.disableUser();
+                _this.changeStatusHtml();
+                return false;
+            }
+            else if (!_this.user.isConnected() && !_this.socket.connected) {
+                return false;
+            }
+        };
+        /**
+         * Trigger all socket events
+         * @return void
+         */
+        this.triggerSocketEvents = function () {
+            var self = _this;
+            /**
+             * Sender draw line
+             */
+            _this.socket.on('draw_line', function (flag) {
+                if (flag) {
+                    var friend_position = self.communicator.getFriendContext().getLatLng();
+                    var my_position = self.user.getMarker().getLatLng();
+                    self.sender_line = L.polyline([[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]], {
+                        color: 'red',
+                        opacity: 1,
+                        weight: 2
+                    }).addTo(self.map.getMap());
+                }
+            });
+            /**
+             * Main decode
+             */
+            _this.socket.on('receive_message', function (data) {
+                var connection_data = JSON.parse(data);
+                if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('encrypted')) {
+                    var message = self.auth.decrypt_received(connection_data.encrypted);
+                    self.notify.makeNotify('success', message, 'New message');
+                    alert(message);
+                }
+            });
+            /**
+             * Sender make line
+             */
+            _this.socket.on('make_line', function () {
+                self.notify.makeNotify('info', 'Private Room', 'Connected to user');
+                self.sender_line.setStyle({
+                    color: 'green'
+                });
+                self.map.getMap().closePopup();
+                self.addSendButton(function () {
+                    var text = document.getElementById("chat_box").value;
+                    var connection_data = { encrypted: "", to: "" };
+                    connection_data.encrypted = self.auth.encrypt(text, self.communicator.getFriendPublicKey());
+                    connection_data.to = self.communicator.getFriendId();
+                    self.socket.emit('send_message', JSON.stringify(connection_data));
+                });
+            });
+            _this.socket.on('save_friend_key', function (friend_pub_key) {
+                self.communicator.setFriendPublicKey(friend_pub_key);
+                console.log('Zapisano klucz publiczny odbiorcy');
+            });
+            /**
+             * Sender make button disconnect
+             */
+            _this.socket.on('make_button_disconnect', function () {
+                self.makeButtonDisconnect(function () {
+                    //console.log(self);
+                });
+            });
+            /**
+             * Sender remove line
+             */
+            _this.socket.on('remove_line', function () {
+                self.notify.makeNotify('error', 'Private Room', 'Friend refuse invitation');
+                self.map.getMap().removeLayer(self.sender_line);
+                self.user.setEnable();
+                self.user.startMoving();
+            });
+            /**
+             * Friend handshake
+             */
+            _this.socket.on('handshake', function (data) {
+                var connection_data = JSON.parse(data);
+                if (connection_data.to == self.user.getUserId() && self.user.isMoving()) {
+                    self.user.stopMoving();
+                    if (confirm('Handshake from:' + connection_data.from)) {
+                        self.user.disable();
+                        self.communicator.setFriendPublicKey(connection_data.sender_pub_key);
+                        console.log('Zapisano klucz publiczny nadawcy');
+                        connection_data.friend_pub_key = self.auth.getPublicKey();
+                        self.socket.emit('handshake_success', JSON.stringify(connection_data));
+                        self.receiver_line = L.polyline(connection_data.gps, {
+                            color: 'green',
+                            opacity: 1,
+                            weight: 2
+                        }).addTo(self.map.getMap());
+                        self.notify.makeNotify('info', 'Private Room', 'Connected to user');
+                        self.makeButtonDisconnect(function () {
+                            // alert('odbiorca alert');
+                        });
+                        self.addSendButton(function () {
+                            var text = document.getElementById("chat_box").value;
+                            var _connection_data = { encrypted: self.auth.encrypt(text, self.communicator.getFriendPublicKey()), to: connection_data.from };
+                            self.socket.emit('send_message', JSON.stringify(_connection_data));
+                        });
+                        return true;
+                    }
+                    else {
+                        self.user.startMoving();
+                        self.user.setEnable();
+                        self.socket.emit('handshake_failed', data);
+                        self.notify.makeNotify('error', 'Private Room', 'Refused invitation');
+                        return false;
+                    }
+                }
+            });
+            /**
+             * Load all users
+             */
+            _this.socket.on('load_users', function (usersData) {
+                var data = JSON.parse(usersData);
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].user_id != self.user.getUserId() && data[i].enabled) {
+                        var marker = self.markerFactory(data[i].lat, data[i].lng, data[i].user_id, data[i].markerType);
+                        self.usersMarkers.push({
+                            user_id: data[i].user_id,
+                            marker: marker,
+                            enabled: data[i].enabled
+                        });
+                    }
+                }
+            });
+            /**
+            * Load logged in user
+            */
+            _this.socket.on('load_user', function (usersData) {
+                var data = JSON.parse(usersData);
+                if (data.user_id != self.user.getUserId()) {
+                    var marker = self.markerFactory(data.lat, data.lng, data.user_id, data.markerType);
+                    self.usersMarkers.push({
+                        user_id: data.user_id,
+                        marker: marker,
+                        enabled: data.enabled
+                    });
+                }
+            });
+            /**
+             * Event after user move marker
+             */
+            _this.socket.on('move_marker', function (usersData) {
+                var data = JSON.parse(usersData);
+                for (var i = 0; i < self.usersMarkers.length; i++) {
+                    if (data.user_id == self.usersMarkers[i].user_id) {
+                        self.usersMarkers[i].marker.setLatLng({
+                            lat: data.lat,
+                            lng: data.lng
+                        });
+                    }
+                }
+            });
+            /**
+             * Remove user marker
+             */
+            _this.socket.on('remove_marker', function (user_id) {
+                for (var i = 0; i < self.usersMarkers.length; i++) {
+                    if (user_id == self.usersMarkers[i].user_id) {
+                        self.usersMarkers[i].marker.remove();
+                    }
+                }
+            });
+        };
+        this.cleanAllMarkers = function () {
+            for (var i = 0; i < _this.usersMarkers.length; i++) {
+                _this.usersMarkers[i].marker.remove();
+            }
+            _this.user.getMarker().remove();
+        };
+        this.disableUser = function () {
+            _this.user.disable();
+            _this.user.stopMoving();
+        };
+        this.changeStatusHtml = function () {
+            document.getElementById("status_toolbar").innerHTML = "  <i class=\"fas fa-ban danger\"></i>&nbsp;disconnected";
+        };
+        /**
+         * Add send button
+         * @param  {()=>void} callback
+         * @returns void
+         */
+        this.addSendButton = function (callback) {
+            var button = document.createElement('button');
+            button.id = "send_button";
+            button.style.width = "100px";
+            button.style.height = "100px";
+            button.innerHTML = "Send";
+            document.getElementById("console").appendChild(button);
+            button.addEventListener("click", function () {
+                callback();
+            });
+        };
+        /**
+         * Set user marker
+         * @return void
+         */
+        this.setUserMarker = function () {
+            var item = _this.icons[_this.user.getMarkerType()];
+            _this.user.setMarker(L.marker([_this.user.getLat(), _this.user.getLng()], { icon: item }).addTo(_this.map.getMap()));
+        };
+        /**
+         * Trigger map events
+         * @return void
+         */
+        this.mapEvents = function () {
+            var self = _this;
+            _this.map.getMap().on('click', function (event) {
+                self.isConnected();
+                if (typeof self.user.getMarker() != 'undefined' && self.user.isMoving() && self.isConnected()) {
+                    self.user.setLat(event.latlng.lat);
+                    self.user.setLng(event.latlng.lng);
+                    self.user.getMarker().setLatLng(event.latlng);
+                    self.updateUserData();
+                }
+            });
+        };
+        /**
+         * Send update data to socket
+         */
+        this.updateUserData = function () {
+            _this.socket.emit('update_user', _this.user.getJsonFromUser());
+        };
+        this.auth = auth;
+        this.socket = socket;
+        this.communicator = new Comunicator.Comunicator();
+        this.notify = new Notify.Notify();
+        this.map = new Map.Map();
+        this.user = new User.User(this.socket.id, this.map.getDefaultPosition(), markerType);
+    }
+    /**
+     * Trigger window events
+     * @return void
+     */
+    Init.prototype.windowEvents = function () {
+        var self = this;
+        window.addEventListener('beforeunload', function (e) {
+            //self.socket.emit('remove_user', self.user_id);
+        });
+    };
+    /**
+     * Add html button
+     * @return void
+     */
+    Init.prototype.makeButtonDisconnect = function (callback) {
+        var div = document.createElement('div');
+        div.setAttribute("class", "d-b");
+        var container = document.getElementById("console");
+        container.appendChild(div);
+        var button = document.createElement('button');
+        button.innerHTML = "Disconnect";
+        div.appendChild(button);
+        button.addEventListener("click", function () {
+            //callback();
+            window.location.href = "/";
+        });
+    };
+    return Init;
+}());

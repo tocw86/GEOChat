@@ -1,5 +1,6 @@
 namespace User {
     export class User {
+
         private moving: boolean = true;
         private lat: number;
         private lng: number;
@@ -7,13 +8,21 @@ namespace User {
         private connected: boolean = true;
         private enabled: boolean = true;
         private markerType: string;
+        private marker: any;
 
         constructor(id: string, position: any, markerType: string) {
             this.user_id = id;
             this.enabled = true;
-            this.lat = position.cords.lat;
-            this.lng = position.cords.lng;
+            this.lat = position.coords.lat;
+            this.lng = position.coords.lng;
             this.markerType = markerType;
+        }
+
+        public setLng(lng: number): void {
+            this.lng = lng;
+        }
+        public setLat(lat: number): void {
+            this.lat = lat;
         }
 
         public getUserId(): string {
@@ -32,6 +41,49 @@ namespace User {
                 markerType: this.markerType,
                 enabled: this.enabled
             });
+        }
+
+        public isMoving(): boolean {
+            return this.moving;
+        }
+
+        public stopMoving(): void {
+            this.moving = false;
+        }
+        public startMoving(): void {
+            this.moving = true;
+        }
+
+        public isConnected(): boolean {
+            return this.connected;
+        }
+
+        public disconnect(): void {
+            this.connected = false;
+        }
+
+        public getMarker(): any {
+            return this.marker;
+        }
+
+        public setEnable(): void {
+            this.enabled = true;
+        }
+        public disable(): void {
+            this.enabled = false;
+        }
+
+        public getMarkerType(): string {
+            return this.markerType;
+        }
+        public setMarker(marker: any): void {
+            this.marker = marker;
+        }
+        public getLat(): number {
+            return this.lat;
+        }
+        public getLng(): number {
+            return this.lng;
         }
     }
 }
