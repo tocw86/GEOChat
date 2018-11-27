@@ -1,4 +1,3 @@
-declare var vNotify: any;
 class Init {
     private auth: any;
     private moving: boolean = true;
@@ -40,9 +39,8 @@ class Init {
     private enabled: boolean = true;
     private sender_line: L.Polyline<GeoJSON.LineString | GeoJSON.MultiLineString, any>;
     private receiver_line: L.Polyline<GeoJSON.LineString | GeoJSON.MultiLineString, any>;
-    private communicator: any = {
-
-    }
+    private communicator: Comunicator.Comunicator;
+    private notify: Notify.Notify;
     private connected: boolean = true;
 
 
@@ -55,6 +53,8 @@ class Init {
         this.auth = auth;
         this.socket = socket;
         this.markerType = markerType;
+        this.communicator = new Comunicator.Comunicator();
+        this.notify = new Notify.Notify();
     }
 
     public start = () => {
@@ -184,8 +184,8 @@ class Init {
 
         if (this.moving) {
 
-            this.communicator.me = this;
-            this.communicator.friend = $this
+            this.communicator.setMyContext(this);
+            this.communicator.setFriendContext($this);
 
             var friend_position = $this.getLatLng();
             var my_position = this.marker.getLatLng();
@@ -196,9 +196,9 @@ class Init {
 
                 //block moving
                 this.moving = false;
-                this.communicator.me = this;
-                this.communicator.friend = $this;
-                this.communicator.friend_user_id = user_id;
+                this.communicator.setMyContext(this);
+                this.communicator.setFriendContext($this);
+                this.communicator.setFriendId(user_id);
                 //comunicate to friend
                 this.socket.emit('start_connect', JSON.stringify({ to: user_id, from: this.user_id, gps: [[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]], sender_pub_key: this.auth.getPublicKey() }));
 
@@ -232,7 +232,7 @@ class Init {
         if (this.connected && this.socket.connected) {
             return true;
         } else if (this.connected && !this.socket.connected) {
-            this.notify("error", "Disconnected please refresh page", "Error");
+            this.notify.makeNotify("error", "Disconnected please refresh page", "Error");
             this.connected = false;
             this.cleanAllMarkers();
             this.disableMap();
@@ -244,24 +244,6 @@ class Init {
         }
 
     }
-
-    /**
-     * 
-     * Make notify
-     * 
-     * @param  {string} type
-     * @param  {string} text
-     * @param  {string} title
-     * @returns void
-     */
-    private notify(type: string, text: string, title: string): void {
-        vNotify[type]({
-            text: text,
-            title: title,
-            sticky: true
-        });
-    }
-
 
     /**
      * Add html button
@@ -298,7 +280,7 @@ class Init {
 
             if (flag) {
 
-                var friend_position = self.communicator.friend.getLatLng();
+                var friend_position = self.communicator.getFriendContext().getLatLng();
                 var my_position = self.marker.getLatLng();
 
                 self.sender_line = L.polyline([[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]], {
@@ -317,7 +299,7 @@ class Init {
             var connection_data = JSON.parse(data);
             if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('encrypted')) {
                 var message = self.auth.decrypt_received(connection_data.encrypted);
-                self.notify('success', message, 'New message');
+                self.notify.makeNotify('success', message, 'New message');
                 alert(message);
             }
 
@@ -327,7 +309,7 @@ class Init {
          */
         this.socket.on('make_line', function () {
 
-            self.notify('info', 'Private Room', 'Connected to user');
+            self.notify.makeNotify('info', 'Private Room', 'Connected to user');
             self.sender_line.setStyle({
                 color: 'green'
             });
@@ -336,15 +318,15 @@ class Init {
             self.addSendButton(function () {
                 var text = document.getElementById("chat_box").value;
                 var connection_data = { encrypted: "", to: "" };
-                connection_data.encrypted = self.auth.encrypt(text, self.communicator.friend_pub_key);
-                connection_data.to = self.communicator.friend_user_id;
+                connection_data.encrypted = self.auth.encrypt(text, self.communicator.getFriendPublicKey());
+                connection_data.to = self.communicator.getFriendId();
                 self.socket.emit('send_message', JSON.stringify(connection_data));
             });
 
         });
 
         this.socket.on('save_friend_key', function (friend_pub_key: string) {
-            self.communicator.friend_pub_key = friend_pub_key;
+            self.communicator.setFriendPublicKey(friend_pub_key);
             console.log('Zapisano klucz publiczny odbiorcy');
         });
 
@@ -361,7 +343,7 @@ class Init {
          * Sender remove line
          */
         this.socket.on('remove_line', function () {
-            self.notify('error', 'Private Room', 'Friend refuse invitation');
+            self.notify.makeNotify('error', 'Private Room', 'Friend refuse invitation');
             self.map.removeLayer(self.sender_line);
             self.enabled = true;
             self.moving = true;
@@ -377,7 +359,7 @@ class Init {
 
                 if (confirm('Handshake from:' + connection_data.from)) {
                     self.enabled = false;
-                    self.communicator.friend_pub_key = connection_data.sender_pub_key;
+                    self.communicator.setFriendPublicKey(connection_data.sender_pub_key);
                     console.log('Zapisano klucz publiczny nadawcy');
                     connection_data.friend_pub_key = self.auth.getPublicKey();
                     self.socket.emit('handshake_success', JSON.stringify(connection_data));
@@ -387,13 +369,13 @@ class Init {
                         opacity: 1,
                         weight: 2
                     }).addTo(self.map);
-                    self.notify('info', 'Private Room', 'Connected to user');
+                    self.notify.makeNotify('info', 'Private Room', 'Connected to user');
                     self.makeButtonDisconnect(function () {
                         // alert('odbiorca alert');
                     });
                     self.addSendButton(function () {
                         var text = document.getElementById("chat_box").value;
-                        var _connection_data = { encrypted: self.auth.encrypt(text, self.communicator.friend_pub_key), to: connection_data.from };
+                        var _connection_data = { encrypted: self.auth.encrypt(text, self.communicator.getFriendPublicKey()), to: connection_data.from };
                         self.socket.emit('send_message', JSON.stringify(_connection_data));
                     });
                     return true;
@@ -401,7 +383,7 @@ class Init {
                     self.moving = true;
                     self.enabled = true;
                     self.socket.emit('handshake_failed', data);
-                    self.notify('error', 'Private Room', 'Refused invitation');
+                    self.notify.makeNotify('error', 'Private Room', 'Refused invitation');
                     return false;
                 }
             }

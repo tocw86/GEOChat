@@ -2,8 +2,10 @@
     "files": [
         "src/.d.ts",
         "src/helpers.ts",
-       // "src/auth.ts",
+        // "src/auth.ts",
         "src/warehouse.ts",
+        "src/repositories/notify.ts",
+        "src/repositories/comunicator.ts",
         "src/init.ts",
     ],
     "compilerOptions": {
