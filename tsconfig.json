@@ -1,13 +1,12 @@
 {
     "files": [
         "src/.d.ts",
-        "src/helpers.ts",
-        // "src/auth.ts",
-        "src/warehouse.ts",
-        "src/repositories/user.ts",
-        "src/repositories/notify.ts",
-        "src/repositories/map.ts",
-        "src/repositories/comunicator.ts",
+        "src/app/helpers/helpers.ts",
+        "src/app/helpers/notify.ts",
+        "src/app/user/warehouse.ts",
+        "src/app/user/user.ts",
+        "src/app/geo/map.ts",
+        "src/app/transport/comunicator.ts",
         "src/init.ts",
     ],
     "compilerOptions": {

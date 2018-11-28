@@ -29,7 +29,7 @@ app.get('/fontawesome-all.css', function (req, res) {
     res.sendFile(__dirname + '/lib/fontawesome/fontawesome-all.css');
 });
 app.get('/bg.jpg', function (req, res) {
-    res.sendFile(__dirname + '/assets/img/bg.jpg');
+    //res.sendFile(__dirname + '/assets/img/bg.jpg');
 });
 app.get('/notify.js', function (req, res) {
     res.sendFile(__dirname + '/dist/repositories/notify.js');
@@ -88,7 +88,6 @@ io.sockets.on('connection', function (socket) {
         if (allUsers.length > 0) {
             socket.emit('load_users', JSON.stringify(allUsers));
         }
-        console.log(data);
 
         //user
         var user = {
@@ -137,7 +136,6 @@ io.sockets.on('connection', function (socket) {
         if (users.isJson(data)) {
             var connection_data = JSON.parse(data);
             if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('encrypted')) {
-                console.log(connection_data.to);
                 socket.to(connection_data.to).emit('receive_message', data);
             }
         }
