@@ -1,0 +1,10 @@
+Fonts used in this design;
+
+Font: ABeeZee, 
+Author: Anja Meiners, 
+Url: http://www.fontsquirrel.com/fonts/abeezee; 
+
+Font: Lane , 
+Author: Apostrophic Labs, 
+Url: http://www.fontsquirrel.com/fonts/lane; 
+
