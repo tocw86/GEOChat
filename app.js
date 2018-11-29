@@ -29,7 +29,7 @@ app.get('/fontawesome-all.css', function (req, res) {
     res.sendFile(__dirname + '/lib/fontawesome/fontawesome-all.css');
 });
 app.get('/bg.jpg', function (req, res) {
-    //res.sendFile(__dirname + '/assets/img/bg.jpg');
+    res.sendFile(__dirname + '/assets/img/bg.jpg');
 });
 app.get('/notify.js', function (req, res) {
     res.sendFile(__dirname + '/dist/repositories/notify.js');
