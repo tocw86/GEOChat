@@ -29,7 +29,7 @@ app.get('/fontawesome-all.css', function (req, res) {
     res.sendFile(__dirname + '/lib/fontawesome/fontawesome-all.css');
 });
 app.get('/bg.jpg', function (req, res) {
-    //res.sendFile(__dirname + '/assets/img/bg.jpg');
+    res.sendFile(__dirname + '/assets/img/bg.jpg');
 });
 app.get('/notify.js', function (req, res) {
     res.sendFile(__dirname + '/dist/repositories/notify.js');
@@ -39,6 +39,9 @@ app.get('/user.js', function (req, res) {
 });
 app.get('/map.js', function (req, res) {
     res.sendFile(__dirname + '/dist/repositories/map.js');
+});
+app.get('/core.min.js', function (req, res) {
+    res.sendFile(__dirname + '/dist/core.min.js');
 });
 app.get('/communicator.js', function (req, res) {
     res.sendFile(__dirname + '/dist/repositories/comunicator.js');

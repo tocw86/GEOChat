@@ -7,6 +7,18 @@ var sass = require('gulp-sass');
 var minifyCSS = require('gulp-clean-css');
 var autoprefixer = require('gulp-autoprefixer');
 
+const paths = {
+    scripts: {
+      src: [
+          'temp/app/helpers/notify.js',
+          'temp/app/geo/*.js',
+          'temp/app/user/user.js',
+          'temp/app/transport/*.js',
+          'temp/init.js',
+          'src/app/views/window.js',
+        ],
+    }
+  };
 //Sass
 gulp.task('sass', function () {
     return gulp.src([
@@ -26,15 +38,21 @@ gulp.task('sass', function () {
 gulp.task("ts", function () {
     return tsProject.src()
         .pipe(tsProject())
-        .pipe(gulp.dest("dist"));
+        .pipe(gulp.dest("temp"));
 });
 gulp.task("scripts", function () {
-    return gulp.src(['dist/init.js', 'src/window.js'])
-        //.pipe(uglify())
+    return gulp.src(paths.scripts.src, {sourcemaps: true})
+        .pipe(uglify())
+        .pipe(concat('core.min.js'))
         .pipe(gulp.dest("dist"));
 });
 gulp.task("window", function () {
     return gulp.src('src/window.js')
+        .pipe(uglify())
+        .pipe(gulp.dest("dist"));
+});
+gulp.task("warehouse", function () {
+    return gulp.src('temp/app/user/warehouse.js')
         .pipe(uglify())
         .pipe(gulp.dest("dist"));
 });
@@ -47,4 +65,4 @@ gulp.task('watch', function () {
 });
 
 
-gulp.task('default', ['ts', 'window', 'sass', 'watch']);
+gulp.task('default', ['ts', 'window', 'sass', 'warehouse','scripts','watch']);

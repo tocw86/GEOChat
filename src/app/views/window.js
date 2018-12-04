@@ -63,7 +63,7 @@
 
                 });
 
-              
+
                 socket.on('connect', function () {
                     var elt = new Init(socket, attr, auth);
                     elt.start();
