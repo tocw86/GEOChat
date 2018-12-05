@@ -38,6 +38,9 @@ gulp.task('sass', function () {
 gulp.task("ts", function () {
     return tsProject.src()
         .pipe(tsProject())
+        .on('error', () => {
+
+        })
         .pipe(gulp.dest("temp"));
 });
 gulp.task("scripts", function () {
@@ -46,11 +49,7 @@ gulp.task("scripts", function () {
         .pipe(concat('core.min.js'))
         .pipe(gulp.dest("dist"));
 });
-gulp.task("window", function () {
-    return gulp.src('src/window.js')
-        .pipe(uglify())
-        .pipe(gulp.dest("dist"));
-});
+ 
 gulp.task("warehouse", function () {
     return gulp.src('temp/app/user/warehouse.js')
         .pipe(uglify())
@@ -59,10 +58,9 @@ gulp.task("warehouse", function () {
 
 gulp.task('watch', function () {
     gulp.watch('src/*.ts', ['ts'])
-    gulp.watch('dist/init.js', ['scripts'])
-    gulp.watch('src/window.js', ['scripts'])
+    gulp.watch('src/*/*.ts', ['ts'])
     gulp.watch('assets/sass/style.scss', ['sass']);
 });
 
 
-gulp.task('default', ['ts', 'window', 'sass', 'warehouse','scripts','watch']);
+gulp.task('default', ['sass', 'ts', 'warehouse','scripts','watch']);

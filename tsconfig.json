@@ -7,6 +7,7 @@
         "src/app/user/user.ts",
         "src/app/geo/map.ts",
         "src/app/transport/comunicator.ts",
+        "src/app/auth/auth.ts",
         "src/init.ts",
     ],
     "compilerOptions": {

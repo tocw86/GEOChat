@@ -185,20 +185,20 @@ class Init {
      * @return void
      */
     private makeButtonDisconnect(callback: () => void): void {
-        var div = document.createElement('div');
-        div.setAttribute("class", "d-b");
+        // var div = document.createElement('div');
+        // div.setAttribute("class", "d-b");
 
-        var container = document.getElementById("console");
-        container.appendChild(div);
+        // var container = document.getElementById("console");
+        // container.appendChild(div);
 
-        var button = document.createElement('button');
-        button.innerHTML = "Disconnect";
+        // var button = document.createElement('button');
+        // button.innerHTML = "Disconnect";
 
-        div.appendChild(button);
-        button.addEventListener("click", function () {
-            //callback();
-            window.location.href = "/";
-        });
+        // div.appendChild(button);
+        // button.addEventListener("click", function () {
+        //     //callback();
+        //     window.location.href = "/";
+        // });
     }
 
     /**
@@ -427,11 +427,7 @@ class Init {
      * @returns void
      */
     private addSendButton = (callback: () => void): void => {
-        var button = document.createElement('button');
-        button.id = "send_button";
-        button.style.width = "15%";
-        button.innerHTML = "Send";
-        document.getElementById("chat_container").appendChild(button);
+        var button = document.getElementById('send_button');
         button.addEventListener("click", function () {
             callback();
         });

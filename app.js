@@ -25,36 +25,31 @@ app.get('/leaflet.css', function (req, res) {
 app.get('/style.css', function (req, res) {
     res.sendFile(__dirname + '/assets/css/style.css');
 });
-app.get('/fontawesome-all.css', function (req, res) {
-    res.sendFile(__dirname + '/lib/fontawesome/fontawesome-all.css');
-});
-app.get('/bg.jpg', function (req, res) {
-    res.sendFile(__dirname + '/assets/img/bg.jpg');
-});
-app.get('/notify.js', function (req, res) {
-    res.sendFile(__dirname + '/dist/repositories/notify.js');
-});
-app.get('/user.js', function (req, res) {
-    res.sendFile(__dirname + '/dist/repositories/user.js');
-});
-app.get('/map.js', function (req, res) {
-    res.sendFile(__dirname + '/dist/repositories/map.js');
-});
+ 
 app.get('/core.min.js', function (req, res) {
     res.sendFile(__dirname + '/dist/core.min.js');
 });
-app.get('/communicator.js', function (req, res) {
-    res.sendFile(__dirname + '/dist/repositories/comunicator.js');
+ 
+app.get('/logo.svg', function (req, res) {
+    res.sendFile(__dirname + '/assets/img/logo.svg');
 });
-app.get('/init.js', function (req, res) {
-    res.sendFile(__dirname + '/dist/init.js');
+ 
+app.get('/blue-marker.svg', function (req, res) {
+    res.sendFile(__dirname + '/assets/img/blue-marker.svg');
 });
+ 
+app.get('/green-marker.svg', function (req, res) {
+    res.sendFile(__dirname + '/assets/img/green-marker.svg');
+});
+ 
+app.get('/red-marker.svg', function (req, res) {
+    res.sendFile(__dirname + '/assets/img/red-marker.svg');
+});
+ 
 app.get('/bundle.js', function (req, res) {
     res.sendFile(__dirname + '/dist/bundle.js');
 });
-app.get('/window.js', function (req, res) {
-    res.sendFile(__dirname + '/dist/window.js');
-});
+ 
 app.get('/marker-icon-green.png', function (req, res) {
     res.sendFile(__dirname + '/lib/leaflet/images/marker-icon-green.png');
 });
