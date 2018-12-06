@@ -1,5 +1,4 @@
-;
-(function () {
+$(window).on('load', function () {
     var $io = io;
     io = null;
 
@@ -36,4 +35,4 @@
             notify('error', 'Disconnected', 'Status');
         }
     });
-})();
+});

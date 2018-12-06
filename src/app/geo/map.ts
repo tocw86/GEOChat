@@ -9,7 +9,6 @@ namespace Map {
         constructor() {
             this.cords = new Cords.Cords();
             this.defaultPosition = this.cords.getRandomPlace();
-            this.initMap();
         }
 
         public getMap(): any {

@@ -50,6 +50,7 @@ class Init {
         this.communicator = new Comunicator.Comunicator();
         this.notify = new Notify.Notify();
         this.map = new Map.Map();
+        this.map.initMap();
         this.user = new User.User(socket.id, this.map.getDefaultPosition(), markerType);
     }
 
