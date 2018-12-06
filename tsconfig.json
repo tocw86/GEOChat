@@ -5,6 +5,7 @@
         "src/app/helpers/notify.ts",
         "src/app/user/warehouse.ts",
         "src/app/user/user.ts",
+        "src/app/geo/cords.ts",
         "src/app/geo/map.ts",
         "src/app/transport/comunicator.ts",
         "src/app/auth/auth.ts",

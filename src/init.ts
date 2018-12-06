@@ -6,16 +6,32 @@ class Init {
     private usersMarkers: Array<any> = [];
     private icons: any = {
         red: L.icon({
-            iconUrl: 'marker-icon-red.png',
+            iconUrl: 'red-marker.svg',
             shadowUrl: 'marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [0, 20],
+            shadowAnchor: [0, 20],
         }),
         green: L.icon({
-            iconUrl: 'marker-icon-green.png',
+            iconUrl: 'green-marker.svg',
             shadowUrl: 'marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [0, 20],
+            shadowAnchor: [0, 20],
         }),
         blue: L.icon({
-            iconUrl: 'marker-icon.png',
+            iconUrl: 'blue-marker.svg',
             shadowUrl: 'marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [0, 20],
+            shadowAnchor: [0, 20],
+        }),
+        yellow: L.icon({
+            iconUrl: 'yellow-marker.svg',
+            shadowUrl: 'marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [0, 20],
+            shadowAnchor: [0, 20],
         }),
     };
     private sender_line: L.Polyline<GeoJSON.LineString | GeoJSON.MultiLineString, any>;
@@ -71,6 +87,23 @@ class Init {
 
     }
 
+
+    private blurChat(): void {
+        setTimeout(function () {
+            (<HTMLInputElement>document.getElementById("map")).classList.add("blur");
+        }, 500);
+
+    }
+
+    /**
+     * Chat input and button
+     * @returns void
+     */
+    private activateHTML(): void {
+        (<HTMLInputElement>document.getElementById("chat_box")).removeAttribute("disabled");
+        (<HTMLInputElement>document.getElementById("send_button")).removeAttribute("disabled");
+        this.blurChat();
+    }
 
 
     /**
@@ -235,7 +268,7 @@ class Init {
             if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('encrypted')) {
                 var message = self.auth.decrypt_received(connection_data.encrypted);
                 self.notify.makeNotify('info', message, self.communicator.getFriendId());
-                
+
             }
 
         });
@@ -249,15 +282,18 @@ class Init {
                 color: 'green'
             });
 
+            self.activateHTML();
+
             self.map.getMap().closePopup();
+
             self.addSendButton(function () {
-                var text = document.getElementById("chat_box").value;
+                var text = (<HTMLInputElement>document.getElementById("chat_box")).value;
                 var connection_data = { encrypted: "", to: "" };
                 connection_data.encrypted = self.auth.encrypt(text, self.communicator.getFriendPublicKey());
                 connection_data.to = self.communicator.getFriendId();
                 self.socket.emit('send_message', JSON.stringify(connection_data));
-                document.getElementById("chat_box").value = null;
-                self.notify.makeNotify('notify',text,self.user.getUserId(), "topRight");
+                (<HTMLInputElement>document.getElementById("chat_box")).value = null;
+                self.notify.makeNotify('notify', text, self.user.getUserId(), "topRight");
             });
 
         });
@@ -308,15 +344,16 @@ class Init {
                         weight: 2
                     }).addTo(self.map.getMap());
                     self.notify.makeNotify('info', 'Private Room', 'Connected to user');
+                    self.activateHTML();
                     self.makeButtonDisconnect(function () {
                         // alert('odbiorca alert');
                     });
                     self.addSendButton(function () {
-                        var text = document.getElementById("chat_box").value;
+                        var text = (<HTMLInputElement>document.getElementById("chat_box")).value;
                         var _connection_data = { encrypted: self.auth.encrypt(text, self.communicator.getFriendPublicKey()), to: connection_data.from };
                         self.socket.emit('send_message', JSON.stringify(_connection_data));
-                        document.getElementById("chat_box").value = null;
-                        self.notify.makeNotify('notify', text, self.user.getUserId(),"topRight");
+                        (<HTMLInputElement>document.getElementById("chat_box")).value = null;
+                        self.notify.makeNotify('notify', text, self.user.getUserId(), "topRight");
                     });
                     return true;
                 } else {

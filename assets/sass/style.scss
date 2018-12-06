@@ -1,19 +1,38 @@
 @import '../../node_modules/bootstrap/scss/bootstrap';
 @import '../../node_modules/font-awesome/scss/font-awesome';
 
-.start-tile{
+.blur {
+    filter: blur(5px);
+}
+
+.start-tile {
     width: 15vh;
+    height: 15vh;
 }
-.start-tile :hover{
-    background: rgba(255,255,255,0.9)
+
+.start-tile :hover {
+    background: rgba(255, 255, 255, 0.9)
 }
-.col-6{
+
+.col-6 {
     cursor: pointer;
 }
+
 #map {
-    height: calc(100vh - 112px);
+    height: calc(100vh - 108px);
     width: 100vw;
+    position: absolute;
+    z-index: -1
 }
+
+.chat_container {
+    @extend #map;
+    z-index: 2;
+    background-color: white;
+    opacity: 0.7;
+    display: none;
+}
+
 // $opacity:0.7;
 // $sepia: rgba(255, 255, 255, $opacity);
 // $sepiaHex:#ffffff;

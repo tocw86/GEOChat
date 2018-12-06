@@ -9,16 +9,17 @@ var autoprefixer = require('gulp-autoprefixer');
 
 const paths = {
     scripts: {
-      src: [
-          'temp/app/helpers/notify.js',
-          'temp/app/geo/*.js',
-          'temp/app/user/user.js',
-          'temp/app/transport/*.js',
-          'temp/init.js',
-          'src/app/views/window.js',
+        src: [
+            'temp/app/helpers/notify.js',
+            'temp/app/geo/cords.js',
+            'temp/app/geo/map.js',
+            'temp/app/user/user.js',
+            'temp/app/transport/*.js',
+            'temp/init.js',
+            'src/app/views/window.js',
         ],
     }
-  };
+};
 //Sass
 gulp.task('sass', function () {
     return gulp.src([
@@ -44,12 +45,14 @@ gulp.task("ts", function () {
         .pipe(gulp.dest("temp"));
 });
 gulp.task("scripts", function () {
-    return gulp.src(paths.scripts.src, {sourcemaps: true})
+    return gulp.src(paths.scripts.src, {
+            sourcemaps: true
+        })
         .pipe(uglify())
         .pipe(concat('core.min.js'))
         .pipe(gulp.dest("dist"));
 });
- 
+
 gulp.task("warehouse", function () {
     return gulp.src('temp/app/user/warehouse.js')
         .pipe(uglify())
@@ -63,4 +66,4 @@ gulp.task('watch', function () {
 });
 
 
-gulp.task('default', ['sass', 'ts', 'warehouse','scripts','watch']);
+gulp.task('default', ['sass', 'ts', 'warehouse', 'scripts', 'watch']);

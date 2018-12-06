@@ -2,21 +2,13 @@ namespace Map {
     export class Map {
 
         private map: any;
-        private defaultPosition = {
-            coords: {
-                latitude: 53.77995,
-                longitude: 20.49416
-                //egipt latitude: 29.975715,
-                //egipt longitude: 31.137718
-                //pasym latitude: 53.6711111,
-                //pasym longitude: 20.784722222222225
-                //usa latitude: 37.629562,
-                //usa  longitude: -116.849556
-            }
-        };
+        private cords: Cords.Cords;
+        private defaultPosition: any;
         private token: string = 'pk.eyJ1IjoidG9jdzg2IiwiYSI6ImNqaHM0YTh2bzA3bDUzN254Mndyb2c4dm0ifQ.3eIb7F5PV-E6pBugRhs4cQ';
 
         constructor() {
+            this.cords = new Cords.Cords();
+            this.defaultPosition = this.cords.getRandomPlace();
             this.initMap();
         }
 
