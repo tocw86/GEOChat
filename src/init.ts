@@ -88,12 +88,22 @@ class Init {
 
     }
 
-
+    /**
+     * Make blur on map
+     * @returns void
+     */
     private blurChat(): void {
         setTimeout(function () {
-            (<HTMLInputElement>document.getElementById("map")).classList.add("blur");
+            (<HTMLDivElement>document.getElementById("map")).classList.add("blur");
         }, 500);
 
+    }
+    /**
+     * Show container
+     * @returns void
+     */
+    private showChatContainer():void{
+        (<HTMLDivElement>document.getElementById("chat_container")).style.display = "block";
     }
 
     /**
@@ -102,8 +112,9 @@ class Init {
      */
     private activateHTML(): void {
         (<HTMLInputElement>document.getElementById("chat_box")).removeAttribute("disabled");
-        (<HTMLInputElement>document.getElementById("send_button")).removeAttribute("disabled");
+        (<HTMLButtonElement>document.getElementById("send_button")).removeAttribute("disabled");
         this.blurChat();
+        this.showChatContainer();
     }
 
 

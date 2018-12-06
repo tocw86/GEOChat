@@ -3,6 +3,7 @@ namespace Cords {
         private places: Array<any>;
 
         constructor() {
+
             let rome = {
                 coords: {
                     latitude: 41.890062,
@@ -85,6 +86,13 @@ namespace Cords {
                 }
             }
 
+            let egipt = {
+                coords: {
+                    latitude: 29.975715,
+                    longitude: 31.137718
+                }
+            }
+
             this.places = new Array();
 
             this.places.push(rome);
@@ -93,18 +101,20 @@ namespace Cords {
             this.places.push(stone);
             this.places.push(whiteHouse);
             this.places.push(olsztyn);
+            this.places.push(egipt);
 
         }
         /**
-         * get random spawn position
+         * get spawn position
          * @returns any
          */
         public getRandomPlace(): any {
             if (this.places.length > 0) {
-                if (this.places.length == 1) {
-                    return this.places[0];
+                if (this.places.length == 7) {
+                    let date = new Date();
+                    return this.places[date.getDay()];
                 } else {
-                    return this.places[this.getRandomNumber(0, this.places.length + 1)];
+                    return this.places[this.getRandomNumber(0, this.places.length - 1)];
                 }
             } else {
                 throw new Error;
