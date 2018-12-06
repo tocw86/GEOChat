@@ -2,6 +2,7 @@ class Init {
     private auth: any;
     private map: Map.Map;
     private user: User.User;
+    private helper: Helpers.Helpers;
     private socket: any;
     private usersMarkers: Array<any> = [];
     private icons: any = {
@@ -45,6 +46,7 @@ class Init {
      * @param socket Socket.io
      */
     constructor(socket: any, markerType: string, auth: any) {
+        this.helper = new Helpers.Helpers();
         this.auth = auth;
         this.socket = socket;
         this.communicator = new Comunicator.Comunicator();
@@ -88,34 +90,7 @@ class Init {
 
     }
 
-    /**
-     * Make blur on map
-     * @returns void
-     */
-    private blurChat(): void {
-        setTimeout(function () {
-            (<HTMLDivElement>document.getElementById("map")).classList.add("blur");
-        }, 500);
-
-    }
-    /**
-     * Show container
-     * @returns void
-     */
-    private showChatContainer():void{
-        (<HTMLDivElement>document.getElementById("chat_container")).style.display = "block";
-    }
-
-    /**
-     * Chat input and button
-     * @returns void
-     */
-    private activateHTML(): void {
-        (<HTMLInputElement>document.getElementById("chat_box")).removeAttribute("disabled");
-        (<HTMLButtonElement>document.getElementById("send_button")).removeAttribute("disabled");
-        this.blurChat();
-        this.showChatContainer();
-    }
+  
 
 
     /**
@@ -279,7 +254,8 @@ class Init {
             var connection_data = JSON.parse(data);
             if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('encrypted')) {
                 var message = self.auth.decrypt_received(connection_data.encrypted);
-                self.notify.makeNotify('info', message, self.communicator.getFriendId());
+                self.helper.makeBubble('me', message);
+                // self.notify.makeNotify('info', message, self.communicator.getFriendId());
 
             }
 
@@ -294,7 +270,7 @@ class Init {
                 color: 'green'
             });
 
-            self.activateHTML();
+            self.helper.activateHTML();
 
             self.map.getMap().closePopup();
 
@@ -305,7 +281,8 @@ class Init {
                 connection_data.to = self.communicator.getFriendId();
                 self.socket.emit('send_message', JSON.stringify(connection_data));
                 (<HTMLInputElement>document.getElementById("chat_box")).value = null;
-                self.notify.makeNotify('notify', text, self.user.getUserId(), "topRight");
+                self.helper.makeBubble('you', text);
+                // self.notify.makeNotify('notify', text, self.user.getUserId(), "topRight");
             });
 
         });
@@ -356,7 +333,7 @@ class Init {
                         weight: 2
                     }).addTo(self.map.getMap());
                     self.notify.makeNotify('info', 'Private Room', 'Connected to user');
-                    self.activateHTML();
+                    self.helper.activateHTML();
                     self.makeButtonDisconnect(function () {
                         // alert('odbiorca alert');
                     });
@@ -365,7 +342,8 @@ class Init {
                         var _connection_data = { encrypted: self.auth.encrypt(text, self.communicator.getFriendPublicKey()), to: connection_data.from };
                         self.socket.emit('send_message', JSON.stringify(_connection_data));
                         (<HTMLInputElement>document.getElementById("chat_box")).value = null;
-                        self.notify.makeNotify('notify', text, self.user.getUserId(), "topRight");
+                        // self.notify.makeNotify('notify', text, self.user.getUserId(), "topRight");
+                        self.helper.makeBubble('you', text);
                     });
                     return true;
                 } else {

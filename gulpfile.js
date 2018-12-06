@@ -10,6 +10,7 @@ var autoprefixer = require('gulp-autoprefixer');
 const paths = {
     scripts: {
         src: [
+            'temp/app/helpers/helpers.js',
             'temp/app/helpers/notify.js',
             'temp/app/geo/cords.js',
             'temp/app/geo/map.js',
