@@ -70,9 +70,11 @@ namespace Helpers {
        
             let div =  ( < HTMLDivElement > document.createElement("div"));
             div.setAttribute('class', 'bubble-' + direction + ' ' + direction);
-            div.innerHTML = message;
+            
           
             col.appendChild(div);
+
+            div.innerHTML = message;
         }
     }
 }
