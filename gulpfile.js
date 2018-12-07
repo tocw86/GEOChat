@@ -49,7 +49,7 @@ gulp.task("scripts", function () {
     return gulp.src(paths.scripts.src, {
             sourcemaps: true
         })
-        .pipe(uglify())
+        // .pipe(uglify())
         .pipe(concat('core.min.js'))
         .pipe(gulp.dest("dist"));
 });

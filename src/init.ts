@@ -90,7 +90,7 @@ class Init {
 
     }
 
-  
+
 
 
     /**
@@ -188,6 +188,7 @@ class Init {
             return true;
         } else if (this.user.isConnected() && !this.socket.connected) {
             this.notify.makeNotify("error", "Disconnected please refresh page", "Error");
+            document.getElementById('status_notify').setAttribute('class', 'status_notify n_disconnect');
             this.user.disconnect();
             this.cleanAllMarkers();
             this.map.disableMap();
@@ -265,7 +266,9 @@ class Init {
          */
         this.socket.on('make_line', function () {
 
-            self.notify.makeNotify('info', 'Private Room', 'Connected to user');
+            // self.notify.makeNotify('info', 'Private Room', 'Connected to user');
+            document.getElementById('status_notify').setAttribute('class', 'status_notify n_connected');
+
             self.sender_line.setStyle({
                 color: 'green'
             });
@@ -305,7 +308,8 @@ class Init {
          * Sender remove line
          */
         this.socket.on('remove_line', function () {
-            self.notify.makeNotify('error', 'Private Room', 'Friend refuse invitation');
+            // self.notify.makeNotify('error', 'Private Room', 'Friend refuse invitation');
+            document.getElementById('status_notify').setAttribute('class', 'status_notify n_disconnect');
             self.map.getMap().removeLayer(self.sender_line);
             self.user.setEnable();
             self.user.startMoving();
@@ -332,7 +336,8 @@ class Init {
                         opacity: 1,
                         weight: 2
                     }).addTo(self.map.getMap());
-                    self.notify.makeNotify('info', 'Private Room', 'Connected to user');
+                    document.getElementById('status_notify').setAttribute('class', 'status_notify n_connected');
+                    // self.notify.makeNotify('info', 'Private Room', 'Connected to user');
                     self.helper.activateHTML();
                     self.makeButtonDisconnect(function () {
                         // alert('odbiorca alert');
@@ -351,6 +356,7 @@ class Init {
                     self.user.setEnable();
                     self.socket.emit('handshake_failed', data);
                     self.notify.makeNotify('error', 'Private Room', 'Refused invitation');
+                    document.getElementById('status_notify').setAttribute('class', 'status_notify n_disconnect');
                     return false;
                 }
             }

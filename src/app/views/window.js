@@ -6,7 +6,8 @@ $(window).on('load', function () {
         vNotify[type]({
             text: text,
             title: title,
-            sticky: true
+            sticky: true,
+
         });
     }
 
@@ -20,9 +21,11 @@ $(window).on('load', function () {
 
             socket.on('console', function (id) {
                 if (id) {
-                    notify('success', 'Connected', 'Status');
+                    document.getElementById('status_notify').setAttribute('class', 'status_notify n_success');
+                    // notify('success', 'Connected', 'Status');
                 } else {
-                    notify('error', 'Disconnected', 'Status');
+                    document.getElementById('status_notify').setAttribute('class', 'status_notify n_disconnect');
+                    // notify('error', 'Disconnected', 'Status');
                 }
             });
             socket.on('connect', function () {
@@ -32,7 +35,8 @@ $(window).on('load', function () {
                 $('#main-container').hide();
             });
         } else {
-            notify('error', 'Disconnected', 'Status');
+            document.getElementById('status_notify').setAttribute('class', 'status_notify n_disconnect');
         }
     });
+
 });

@@ -2,6 +2,9 @@
 @import '../../node_modules/font-awesome/scss/font-awesome';
 $color-chat-gray:#e6e5ea;
 $color-chat-blue:#57b2f3;
+$color-light-green:#33cc66;
+$color-light-red:#ff1a4b;
+$color-dark-grey:#969696;
 
 .blur {
     filter: blur(5px);
@@ -33,10 +36,11 @@ $color-chat-blue:#57b2f3;
     z-index: 2;
     display: none;
 }
-.bubble-you{
+
+.bubble-you {
     background-color: $color-chat-blue;
     border-radius: 5px;
- 
+
     display: inline-block;
     padding: 10px 18px;
     position: relative;
@@ -45,23 +49,24 @@ $color-chat-blue:#57b2f3;
 }
 
 .bubble-you::before {
-    background-color:  $color-chat-blue;
+    background-color: $color-chat-blue;
     content: "\00a0";
     display: block;
     height: 16px;
     position: absolute;
     top: 11px;
-    transform:             rotate( 29deg ) skew( -35deg );
-        -moz-transform:    rotate( 29deg ) skew( -35deg );
-        -ms-transform:     rotate( 29deg ) skew( -35deg );
-        -o-transform:      rotate( 29deg ) skew( -35deg );
-        -webkit-transform: rotate( 29deg ) skew( -35deg );
-    width:  20px;
+    transform: rotate(29deg) skew(-35deg);
+    -moz-transform: rotate(29deg) skew(-35deg);
+    -ms-transform: rotate(29deg) skew(-35deg);
+    -o-transform: rotate(29deg) skew(-35deg);
+    -webkit-transform: rotate(29deg) skew(-35deg);
+    width: 20px;
 }
-.bubble-me{
+
+.bubble-me {
     background-color: $color-chat-gray;
     border-radius: 5px;
- 
+
     display: inline-block;
     padding: 10px 18px;
     position: relative;
@@ -76,31 +81,56 @@ $color-chat-blue:#57b2f3;
     height: 16px;
     position: absolute;
     top: 11px;
-    transform:             rotate( 29deg ) skew( -35deg );
-        -moz-transform:    rotate( 29deg ) skew( -35deg );
-        -ms-transform:     rotate( 29deg ) skew( -35deg );
-        -o-transform:      rotate( 29deg ) skew( -35deg );
-        -webkit-transform: rotate( 29deg ) skew( -35deg );
-    width:  20px;
+    transform: rotate(29deg) skew(-35deg);
+    -moz-transform: rotate(29deg) skew(-35deg);
+    -ms-transform: rotate(29deg) skew(-35deg);
+    -o-transform: rotate(29deg) skew(-35deg);
+    -webkit-transform: rotate(29deg) skew(-35deg);
+    width: 20px;
 }
 
 .me {
-  
-    margin: 5px 45px 5px 20px;     
- 
+
+    margin: 5px 45px 5px 20px;
+
 }
 
 .me::before {
-    box-shadow: -2px 2px 2px 0 rgba( 178, 178, 178, .4 );
-    left: -9px;           
+    box-shadow: -2px 2px 2px 0 rgba(178, 178, 178, .4);
+    left: -9px;
 }
 
 .you {
-     
-    margin: 5px 20px 5px 45px;         
+
+    margin: 5px 20px 5px 45px;
 }
 
 .you::before {
-    box-shadow: 2px -2px 2px 0 rgba( 178, 178, 178, .4 );
-    right: -9px;    
+    box-shadow: 2px -2px 2px 0 rgba(178, 178, 178, .4);
+    right: -9px;
+}
+
+.status_notify {
+    padding: 9px;
+    opacity: 0.9;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+
+}
+
+.n_start {
+    background-color: $color-dark-grey;
+}
+
+.n_success {
+    background: $color-light-green;
+}
+
+.n_connected {
+    background-color: $color-chat-blue
+}
+
+.n_disconnect {
+    background-color: $color-light-red;
 }
