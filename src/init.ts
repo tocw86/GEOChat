@@ -67,7 +67,7 @@ class Init {
 
         this.sendUserData();
 
-        this.auth = new this.auth(this.user.getUserId());
+        // this.auth = new this.auth(this.user.getUserId());
 
         this.mapEvents();
 

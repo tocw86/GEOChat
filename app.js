@@ -13,6 +13,9 @@ io.origins(['*:*']);
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
+app.get('/worker.js', function (req, res) {
+    res.sendFile(__dirname + '/dist/worker.js');
+});
 app.get('/leaflet.js', function (req, res) {
     res.sendFile(__dirname + '/lib/leaflet/leaflet.js');
 });
