@@ -279,12 +279,15 @@ class Init {
 
             self.addSendButton(function () {
                 var text = (<HTMLInputElement>document.getElementById("chat_box")).value;
-                var connection_data = { encrypted: "", to: "" };
-                connection_data.encrypted = self.auth.encrypt(text, self.communicator.getFriendPublicKey());
-                connection_data.to = self.communicator.getFriendId();
-                self.socket.emit('send_message', JSON.stringify(connection_data));
-                (<HTMLInputElement>document.getElementById("chat_box")).value = null;
-                self.helper.makeBubble('you', text);
+                if (text.trim() != "" && text.length > 0) {
+                    var connection_data = { encrypted: "", to: "" };
+                    connection_data.encrypted = self.auth.encrypt(text, self.communicator.getFriendPublicKey());
+                    connection_data.to = self.communicator.getFriendId();
+                    self.socket.emit('send_message', JSON.stringify(connection_data));
+                    (<HTMLInputElement>document.getElementById("chat_box")).value = null;
+                    self.helper.makeBubble('you', text);
+                }
+
                 // self.notify.makeNotify('notify', text, self.user.getUserId(), "topRight");
             });
 
@@ -344,11 +347,13 @@ class Init {
                     });
                     self.addSendButton(function () {
                         var text = (<HTMLInputElement>document.getElementById("chat_box")).value;
-                        var _connection_data = { encrypted: self.auth.encrypt(text, self.communicator.getFriendPublicKey()), to: connection_data.from };
-                        self.socket.emit('send_message', JSON.stringify(_connection_data));
-                        (<HTMLInputElement>document.getElementById("chat_box")).value = null;
-                        // self.notify.makeNotify('notify', text, self.user.getUserId(), "topRight");
-                        self.helper.makeBubble('you', text);
+                        if (text.trim() != "" && text.length > 0) {
+                            var _connection_data = { encrypted: self.auth.encrypt(text, self.communicator.getFriendPublicKey()), to: connection_data.from };
+                            self.socket.emit('send_message', JSON.stringify(_connection_data));
+                            (<HTMLInputElement>document.getElementById("chat_box")).value = null;
+                            // self.notify.makeNotify('notify', text, self.user.getUserId(), "topRight");
+                            self.helper.makeBubble('you', text);
+                        }
                     });
                     return true;
                 } else {
