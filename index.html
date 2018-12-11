@@ -20,7 +20,7 @@
 
 <body>
     <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="/">
             <img src="/logo.svg" width="30" height="30" class="d-inline-block align-top" alt="">
             <strong>Geo</strong>Chat
         </a>
@@ -30,7 +30,7 @@
     </nav>
     <div id="map"></div>
     <div id="chat_container" class="chat_container">
-        <div class="container" id="chat_container_box">
+        <div class="container mt-3" id="chat_container_box">
 
         </div>
 
@@ -38,10 +38,11 @@
     <div class="container" id="main-container">
         <div class="row">
             <div class="col-12 text-center">
-                <h4>Wybierz swój marker</h4>
+                <h4 id="progress_info">Generowanie kluczy <img src="loader.gif" style="max-height:50px"></h4>
+
             </div>
         </div>
-        <div class="row">
+        <div class="row" id="markers" style="opacity: 0.3">
             <div class="col-6 text-center shadow-sm p-3 mb-5 bg-white rounded" data-marker="green">
                 <img src="/green-marker.svg" class="img-fluid start-tile mt-5 mb-5" />
             </div>

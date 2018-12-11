@@ -1,2 +1,5 @@
 node_modules/
-temp/
+temp/*
+!temp/app/
+temp/app/*
+!temp/app/auth

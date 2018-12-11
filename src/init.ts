@@ -45,15 +45,15 @@ class Init {
      * 
      * @param socket Socket.io
      */
-    constructor(socket: any, markerType: string, auth: any) {
+    constructor(socket: any, markerType: string, auth: any, keys: any) {
         this.helper = new Helpers.Helpers();
-        this.auth = auth;
         this.socket = socket;
         this.communicator = new Comunicator.Comunicator();
         this.notify = new Notify.Notify();
         this.map = new Map.Map();
         this.map.initMap();
         this.user = new User.User(socket.id, this.map.getDefaultPosition(), markerType);
+        this.auth = new auth(socket.id, keys);
     }
 
     public start = () => {
@@ -66,8 +66,6 @@ class Init {
     public run = (position: any) => {
 
         this.sendUserData();
-
-        // this.auth = new this.auth(this.user.getUserId());
 
         this.mapEvents();
 

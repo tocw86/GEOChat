@@ -1,7 +1,5 @@
 import { Buffer } from 'buffer';
-import * as keypair from "keypair";
 import * as crypto from "crypto-browserify";
-
 export class Auth {
 
     private publicKey: string;
@@ -9,14 +7,11 @@ export class Auth {
     private enabled: boolean;
     private user_id: string;
 
-    constructor() {
-
-        var keys = keypair(512);
-
+    constructor(user_id: string, keys: any) {
         this.publicKey = keys.public;
         this.privateKey = keys.private;
+        this.user_id = user_id;
         this.enabled = true;
-        console.log('User się połączył');
     }
 
     public setUserId(user_id: string) {

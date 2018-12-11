@@ -8,7 +8,8 @@
         "src/app/geo/cords.ts",
         "src/app/geo/map.ts",
         "src/app/transport/comunicator.ts",
-        "src/app/auth/auth.ts",
+        // "src/app/auth/factoryKeys.ts",
+        // "src/app/auth/auth.ts",
         "src/init.ts",
     ],
     "compilerOptions": {

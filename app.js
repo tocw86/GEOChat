@@ -16,6 +16,9 @@ app.get('/', function (req, res) {
 app.get('/worker.js', function (req, res) {
     res.sendFile(__dirname + '/dist/worker.js');
 });
+app.get('/loader.gif', function (req, res) {
+    res.sendFile(__dirname + '/assets/img/loader.gif');
+});
 app.get('/leaflet.js', function (req, res) {
     res.sendFile(__dirname + '/lib/leaflet/leaflet.js');
 });
@@ -55,7 +58,7 @@ app.get('/yellow-marker.svg', function (req, res) {
 });
 
 app.get('/bundle.js', function (req, res) {
-    res.sendFile(__dirname + '/dist/bundle.js');
+    res.sendFile(__dirname + '/bundles/auth.js');
 });
 
 app.get('/marker-shadow.png', function (req, res) {
