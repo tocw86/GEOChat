@@ -4,7 +4,7 @@ class Init {
     private user: User.User;
     private helper: Helpers.Helpers;
     private socket: any;
-    private usersMarkers: Array<any> = [];
+    private usersMarkers: Array < any > = [];
     private icons: any = {
         red: L.icon({
             iconUrl: 'red-marker.svg',
@@ -35,8 +35,8 @@ class Init {
             shadowAnchor: [0, 20],
         }),
     };
-    private sender_line: L.Polyline<GeoJSON.LineString | GeoJSON.MultiLineString, any>;
-    private receiver_line: L.Polyline<GeoJSON.LineString | GeoJSON.MultiLineString, any>;
+    private sender_line: L.Polyline < GeoJSON.LineString | GeoJSON.MultiLineString, any > ;
+    private receiver_line: L.Polyline < GeoJSON.LineString | GeoJSON.MultiLineString, any > ;
     private communicator: Comunicator.Comunicator;
     private notify: Notify.Notify;
 
@@ -61,8 +61,8 @@ class Init {
     }
 
     /**
-    * Run after get geo action
-    */
+     * Run after get geo action
+     */
     public run = (position: any) => {
 
         this.sendUserData();
@@ -111,7 +111,9 @@ class Init {
     private markerFactory = (lat: number, lng: number, user_id: string, markerType: string): any => {
         var self = this;
         var icon = this.icons[markerType];
-        var marker = L.marker([lat, lng], { icon: icon }).addTo(this.map.getMap()).on('click', function (event: any) {
+        var marker = L.marker([lat, lng], {
+            icon: icon
+        }).addTo(this.map.getMap()).on('click', function (event: any) {
 
             var $this = this;
             setTimeout(function () {
@@ -153,7 +155,15 @@ class Init {
                 this.communicator.setFriendContext($this);
                 this.communicator.setFriendId(user_id);
                 //comunicate to friend
-                this.socket.emit('start_connect', JSON.stringify({ to: user_id, from: this.user.getUserId(), gps: [[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]], sender_pub_key: this.auth.getPublicKey() }));
+                this.socket.emit('start_connect', JSON.stringify({
+                    to: user_id,
+                    from: this.user.getUserId(),
+                    gps: [
+                        [friend_position.lat, friend_position.lng],
+                        [my_position.lat, my_position.lng]
+                    ],
+                    sender_pub_key: this.auth.getPublicKey()
+                }));
 
             } else {
                 alert("To far to make connection (" + distance + " m). Min. distance 3000m");
@@ -171,7 +181,7 @@ class Init {
      * @param  {number} long2
      */
     private calculateDistance = (lat1: number, lat2: number, long1: number, long2: number) => {
-        let p = 0.017453292519943295;    // Math.PI / 180
+        let p = 0.017453292519943295; // Math.PI / 180
         let c = Math.cos;
         let a = 0.5 - c((lat1 - lat2) * p) / 2 + c(lat2 * p) * c((lat1) * p) * (1 - c(((long1 - long2) * p))) / 2;
         let dis = (12742 * Math.asin(Math.sqrt(a))); // 2 * R; R = 6371 km
@@ -237,7 +247,10 @@ class Init {
                 var friend_position = self.communicator.getFriendContext().getLatLng();
                 var my_position = self.user.getMarker().getLatLng();
 
-                self.sender_line = L.polyline([[friend_position.lat, friend_position.lng], [my_position.lat, my_position.lng]], {
+                self.sender_line = L.polyline([
+                    [friend_position.lat, friend_position.lng],
+                    [my_position.lat, my_position.lng]
+                ], {
                     color: 'red',
                     opacity: 1,
                     weight: 2
@@ -253,7 +266,8 @@ class Init {
             var connection_data = JSON.parse(data);
             if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('encrypted')) {
                 var message = self.auth.decrypt_received(connection_data.encrypted);
-                self.helper.makeBubble('me', message);
+                let div = self.helper.makeBubble('me', message);
+                div.scrollIntoView();
                 // self.notify.makeNotify('info', message, self.communicator.getFriendId());
 
             }
@@ -276,14 +290,20 @@ class Init {
             self.map.getMap().closePopup();
 
             self.addSendButton(function () {
-                var text = (<HTMLInputElement>document.getElementById("chat_box")).value;
-                if (text.trim() != "" && text.length > 0) {
-                    var connection_data = { encrypted: "", to: "" };
+                var text = ( < HTMLInputElement > document.getElementById("chat_box")).value;
+                if (text.trim() != "" && text.length > 0 && self.helper.countUtf8(text) <= 140) {
+                    var connection_data = {
+                        encrypted: "",
+                        to: ""
+                    };
                     connection_data.encrypted = self.auth.encrypt(text, self.communicator.getFriendPublicKey());
                     connection_data.to = self.communicator.getFriendId();
                     self.socket.emit('send_message', JSON.stringify(connection_data));
-                    (<HTMLInputElement>document.getElementById("chat_box")).value = null;
-                    self.helper.makeBubble('you', text);
+                    ( < HTMLInputElement > document.getElementById("chat_box")).value = null;
+                    let div = self.helper.makeBubble('you', text);
+                    div.scrollIntoView();
+                    let size: number = 140;
+                    ( < HTMLDivElement > document.getElementById('text_counter')).innerHTML = size.toString();
                 }
 
                 // self.notify.makeNotify('notify', text, self.user.getUserId(), "topRight");
@@ -344,13 +364,20 @@ class Init {
                         // alert('odbiorca alert');
                     });
                     self.addSendButton(function () {
-                        var text = (<HTMLInputElement>document.getElementById("chat_box")).value;
-                        if (text.trim() != "" && text.length > 0) {
-                            var _connection_data = { encrypted: self.auth.encrypt(text, self.communicator.getFriendPublicKey()), to: connection_data.from };
+                        var text = ( < HTMLInputElement > document.getElementById("chat_box")).value;
+                        if (text.trim() != "" && text.length > 0 && self.helper.countUtf8(text) <= 140) {
+                            var _connection_data = {
+                                encrypted: self.auth.encrypt(text, self.communicator.getFriendPublicKey()),
+                                to: connection_data.from
+                            };
                             self.socket.emit('send_message', JSON.stringify(_connection_data));
-                            (<HTMLInputElement>document.getElementById("chat_box")).value = null;
+                            ( < HTMLInputElement > document.getElementById("chat_box")).value = null;
                             // self.notify.makeNotify('notify', text, self.user.getUserId(), "topRight");
-                            self.helper.makeBubble('you', text);
+                            let div = self.helper.makeBubble('you', text);
+                            div.scrollIntoView();
+
+                            let size: number = 140;
+                            ( < HTMLDivElement > document.getElementById('text_counter')).innerHTML = size.toString();
                         }
                     });
                     return true;
@@ -375,21 +402,19 @@ class Init {
             for (var i = 0; i < data.length; i++) {
                 if (data[i].user_id != self.user.getUserId() && data[i].enabled) {
                     var marker = self.markerFactory(data[i].lat, data[i].lng, data[i].user_id, data[i].markerType);
-                    self.usersMarkers.push(
-                        {
-                            user_id: data[i].user_id,
-                            marker: marker,
-                            enabled: data[i].enabled
-                        }
-                    );
+                    self.usersMarkers.push({
+                        user_id: data[i].user_id,
+                        marker: marker,
+                        enabled: data[i].enabled
+                    });
                 }
 
             }
         });
 
         /**
-        * Load logged in user
-        */
+         * Load logged in user
+         */
         this.socket.on('load_user', function (usersData: string) {
             var data = JSON.parse(usersData);
 
@@ -397,13 +422,11 @@ class Init {
 
                 var marker = self.markerFactory(data.lat, data.lng, data.user_id, data.markerType);
 
-                self.usersMarkers.push(
-                    {
-                        user_id: data.user_id,
-                        marker: marker,
-                        enabled: data.enabled
-                    }
-                );
+                self.usersMarkers.push({
+                    user_id: data.user_id,
+                    marker: marker,
+                    enabled: data.enabled
+                });
             }
         });
 
@@ -475,7 +498,9 @@ class Init {
      */
     private setUserMarker = (): void => {
         var item = this.icons[this.user.getMarkerType()];
-        this.user.setMarker(L.marker([this.user.getLat(), this.user.getLng()], { icon: item }).addTo(this.map.getMap()));
+        this.user.setMarker(L.marker([this.user.getLat(), this.user.getLng()], {
+            icon: item
+        }).addTo(this.map.getMap()));
     }
 
 

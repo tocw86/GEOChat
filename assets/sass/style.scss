@@ -35,6 +35,8 @@ $color-dark-grey:#969696;
     @extend #map;
     z-index: 2;
     display: none;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .bubble-you {
