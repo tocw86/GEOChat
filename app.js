@@ -16,20 +16,12 @@ app.get('/', function (req, res) {
 app.get('/worker.js', function (req, res) {
     res.sendFile(__dirname + '/dist/worker.js');
 });
+
 app.get('/loader.gif', function (req, res) {
     res.sendFile(__dirname + '/assets/img/loader.gif');
 });
-app.get('/leaflet.js', function (req, res) {
-    res.sendFile(__dirname + '/lib/leaflet/leaflet.js');
-});
-app.get('/leaflet.geometryutil.js', function (req, res) {
-    res.sendFile(__dirname + '/lib/leaflet/leaflet.geometryutil.js');
-});
-app.get('/leaflet.css', function (req, res) {
-    res.sendFile(__dirname + '/lib/leaflet/leaflet.css');
-});
-app.get('/style.css', function (req, res) {
-    res.sendFile(__dirname + '/assets/css/style.css');
+app.get('/style.min.css', function (req, res) {
+    res.sendFile(__dirname + '/dist/style.min.css');
 });
 
 app.get('/core.min.js', function (req, res) {
@@ -51,24 +43,12 @@ app.get('/green-marker.svg', function (req, res) {
 app.get('/red-marker.svg', function (req, res) {
     res.sendFile(__dirname + '/assets/img/red-marker.svg');
 });
-
-
 app.get('/yellow-marker.svg', function (req, res) {
     res.sendFile(__dirname + '/assets/img/yellow-marker.svg');
 });
 
-app.get('/bundle.js', function (req, res) {
-    res.sendFile(__dirname + '/bundles/auth.js');
-});
-
 app.get('/marker-shadow.png', function (req, res) {
     res.sendFile(__dirname + '/lib/leaflet/images/marker-shadow.png');
-});
-app.get('/vanilla-notify.css', function (req, res) {
-    res.sendFile(__dirname + '/lib/notify/vanilla-notify.css');
-});
-app.get('/vanilla-notify.js', function (req, res) {
-    res.sendFile(__dirname + '/lib/notify/vanilla-notify.js');
 });
 
 var users = new warehouse.Warehouse();
