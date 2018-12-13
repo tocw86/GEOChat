@@ -83,4 +83,4 @@ gulp.task('css', function () {
         .pipe(gulp.dest('dist'));
 });
 
-gulp.task('default', ['sass', 'ts', 'warehouse', 'scripts', 'watch', 'css']);
+gulp.task('default', ['ts', 'warehouse', 'scripts', 'watch']);

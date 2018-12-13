@@ -5,13 +5,23 @@ namespace Helpers {
             return Math.random().toString(36).replace('0.', '');
         }
 
+
+        /**
+         * Accepted handshake info
+         * @returns void
+         */
+        public startConnectionNotify(): void {
+            let notify = new Notify.Notify();
+            notify.makeNotify('info', 'Możecie zacząć rozmawiać!', 'Połączono z użytkownikiem');
+        }
+
         /**
          * get random string
          * 
          * @param len 
          * @param charSet 
          */
-        public randomString(len: number, charSet ? : string): string {
+        public randomString(len: number, charSet?: string): string {
             charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
             var randomString = '';
             for (var i = 0; i < len; i++) {
@@ -20,14 +30,14 @@ namespace Helpers {
             }
             return randomString;
         }
- 
+
         /**
          * Make blur on map
          * @returns void
          */
         public blurChat(): void {
             setTimeout(function () {
-                ( < HTMLDivElement > document.getElementById("map")).classList.add("blur");
+                (<HTMLDivElement>document.getElementById("map")).classList.add("blur");
             }, 500);
 
         }
@@ -35,35 +45,35 @@ namespace Helpers {
          * Length to end of string
          * @returns void
          */
-        public triggerInputKeypress():void{
+        public triggerInputKeypress(): void {
             var self = this;
             (<HTMLInputElement>document.getElementById('chat_box')).addEventListener("input", function (event) {
-                if(typeof event.target != undefined){
-                    let strLength:number = self.countUtf8((<HTMLInputElement>event.target).value);
-                    let size:number = 140 - strLength;
+                if (typeof event.target != undefined) {
+                    let strLength: number = self.countUtf8((<HTMLInputElement>event.target).value);
+                    let size: number = 140 - strLength;
                     let textCounter = (<HTMLDivElement>document.getElementById('text_counter'));
                     textCounter.innerHTML = size.toString();
 
-                    if(size < 10){
+                    if (size < 10) {
                         textCounter.style.color = "#d5243e";
-                    }else{
+                    } else {
                         textCounter.style.color = "#000000";
                     }
                 }
-             });
+            });
         }
         /**
          * Make click on enterk key
          * @returns void
          */
         public triggerEnterKey(): void {
-          
+
             document.addEventListener("keypress", function onEvent(event) {
                 if (event.key === "Enter") {
-                    ( < HTMLButtonElement > document.getElementById('send_button')).click();
+                    (<HTMLButtonElement>document.getElementById('send_button')).click();
                 }
             });
-          
+
         }
 
         /**
@@ -71,7 +81,7 @@ namespace Helpers {
          * @returns void
          */
         public showChatContainer(): void {
-            ( < HTMLDivElement > document.getElementById("chat_container")).style.display = "block";
+            (<HTMLDivElement>document.getElementById("chat_container")).style.display = "block";
         }
 
         /**
@@ -79,12 +89,13 @@ namespace Helpers {
          * @returns void
          */
         public activateHTML(): void {
-            ( < HTMLInputElement > document.getElementById("chat_box")).removeAttribute("disabled");
-            ( < HTMLButtonElement > document.getElementById("send_button")).removeAttribute("disabled");
+            (<HTMLInputElement>document.getElementById("chat_box")).removeAttribute("disabled");
+            (<HTMLButtonElement>document.getElementById("send_button")).removeAttribute("disabled");
             this.blurChat();
             this.showChatContainer();
             this.triggerEnterKey();
             this.triggerInputKeypress();
+            this.startConnectionNotify();
         }
 
         /**
@@ -96,16 +107,16 @@ namespace Helpers {
          */
         public makeBubble(direction: string, message: string): any {
 
-            let col = ( < HTMLDivElement > document.createElement("div"));
+            let col = (<HTMLDivElement>document.createElement("div"));
             if (direction == 'you') {
                 col.setAttribute('class', 'col-12 text-right');
             } else {
                 col.setAttribute('class', 'col-12 text-left');
             }
 
-            ( < HTMLDivElement > document.getElementById("chat_container_box")).appendChild(col);
+            (<HTMLDivElement>document.getElementById("chat_container_box")).appendChild(col);
 
-            let div = ( < HTMLDivElement > document.createElement("div"));
+            let div = (<HTMLDivElement>document.createElement("div"));
             div.setAttribute('class', 'bubble-' + direction + ' ' + direction);
             col.appendChild(div);
             div.innerHTML = message;

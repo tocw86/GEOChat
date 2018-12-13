@@ -4,7 +4,7 @@ class Init {
     private user: User.User;
     private helper: Helpers.Helpers;
     private socket: any;
-    private usersMarkers: Array < any > = [];
+    private usersMarkers: Array<any> = [];
     private icons: any = {
         red: L.icon({
             iconUrl: 'red-marker.svg',
@@ -35,8 +35,8 @@ class Init {
             shadowAnchor: [0, 20],
         }),
     };
-    private sender_line: L.Polyline < GeoJSON.LineString | GeoJSON.MultiLineString, any > ;
-    private receiver_line: L.Polyline < GeoJSON.LineString | GeoJSON.MultiLineString, any > ;
+    private sender_line: L.Polyline<GeoJSON.LineString | GeoJSON.MultiLineString, any>;
+    private receiver_line: L.Polyline<GeoJSON.LineString | GeoJSON.MultiLineString, any>;
     private communicator: Comunicator.Comunicator;
     private notify: Notify.Notify;
 
@@ -122,7 +122,7 @@ class Init {
                 });
             }, 50);
         });
-        marker.bindPopup('<p>' + user_id + '<br/><button id="' + user_id + '">Handshake</button></p>');
+        marker.bindPopup('<div class="text-center"><strong>Kliknij aby zacząć rozmowę</strong><br/><button class="btn btn-primary" id="' + user_id + '">Połącz</button></div>');
 
         return marker;
     };
@@ -251,10 +251,10 @@ class Init {
                     [friend_position.lat, friend_position.lng],
                     [my_position.lat, my_position.lng]
                 ], {
-                    color: 'red',
-                    opacity: 1,
-                    weight: 2
-                }).addTo(self.map.getMap());
+                        color: 'red',
+                        opacity: 1,
+                        weight: 2
+                    }).addTo(self.map.getMap());
 
             }
 
@@ -290,7 +290,7 @@ class Init {
             self.map.getMap().closePopup();
 
             self.addSendButton(function () {
-                var text = ( < HTMLInputElement > document.getElementById("chat_box")).value;
+                var text = (<HTMLInputElement>document.getElementById("chat_box")).value;
                 if (text.trim() != "" && text.length > 0 && self.helper.countUtf8(text) <= 140) {
                     var connection_data = {
                         encrypted: "",
@@ -299,11 +299,11 @@ class Init {
                     connection_data.encrypted = self.auth.encrypt(text, self.communicator.getFriendPublicKey());
                     connection_data.to = self.communicator.getFriendId();
                     self.socket.emit('send_message', JSON.stringify(connection_data));
-                    ( < HTMLInputElement > document.getElementById("chat_box")).value = null;
+                    (<HTMLInputElement>document.getElementById("chat_box")).value = null;
                     let div = self.helper.makeBubble('you', text);
                     div.scrollIntoView();
                     let size: number = 140;
-                    ( < HTMLDivElement > document.getElementById('text_counter')).innerHTML = size.toString();
+                    (<HTMLDivElement>document.getElementById('text_counter')).innerHTML = size.toString();
                 }
 
                 // self.notify.makeNotify('notify', text, self.user.getUserId(), "topRight");
@@ -344,7 +344,7 @@ class Init {
             if (connection_data.to == self.user.getUserId() && self.user.isMoving()) {
                 self.user.stopMoving();
 
-                if (confirm('Handshake from:' + connection_data.from)) {
+                if (confirm('Użytkownik "' + connection_data.from + '" chce nawiązać z tobą połączenie')) {
                     self.user.disable();
                     self.communicator.setFriendPublicKey(connection_data.sender_pub_key);
                     self.communicator.setFriendId(connection_data.from);
@@ -364,20 +364,20 @@ class Init {
                         // alert('odbiorca alert');
                     });
                     self.addSendButton(function () {
-                        var text = ( < HTMLInputElement > document.getElementById("chat_box")).value;
+                        var text = (<HTMLInputElement>document.getElementById("chat_box")).value;
                         if (text.trim() != "" && text.length > 0 && self.helper.countUtf8(text) <= 140) {
                             var _connection_data = {
                                 encrypted: self.auth.encrypt(text, self.communicator.getFriendPublicKey()),
                                 to: connection_data.from
                             };
                             self.socket.emit('send_message', JSON.stringify(_connection_data));
-                            ( < HTMLInputElement > document.getElementById("chat_box")).value = null;
+                            (<HTMLInputElement>document.getElementById("chat_box")).value = null;
                             // self.notify.makeNotify('notify', text, self.user.getUserId(), "topRight");
                             let div = self.helper.makeBubble('you', text);
                             div.scrollIntoView();
 
                             let size: number = 140;
-                            ( < HTMLDivElement > document.getElementById('text_counter')).innerHTML = size.toString();
+                            (<HTMLDivElement>document.getElementById('text_counter')).innerHTML = size.toString();
                         }
                     });
                     return true;
