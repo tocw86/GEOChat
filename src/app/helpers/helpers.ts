@@ -1,6 +1,15 @@
 namespace Helpers {
     export class Helpers {
 
+        /**
+         * 
+         * @param connected boolean
+         */
+        public isConnectedHelper(connected : boolean): void{
+            if(!connected)
+            window.location.href = "/";
+        }
+
         public generateString(): string {
             return Math.random().toString(36).replace('0.', '');
         }

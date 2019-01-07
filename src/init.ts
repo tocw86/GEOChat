@@ -486,8 +486,10 @@ class Init {
      * @returns void
      */
     private addSendButton = (callback: () => void): void => {
+        var self = this;
         var button = document.getElementById('send_button');
         button.addEventListener("click", function () {
+            self.isConnected();
             callback();
         });
     }
