@@ -13,9 +13,9 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link href="https://fonts.googleapis.com/css?family=Montserrat:500,700&amp;subset=latin-ext" rel="stylesheet">
-    <link rel="stylesheet" href="leaflet.css" />
-    <link rel="stylesheet" href="vanilla-notify.css" />
-    <link rel="stylesheet" href="style.css" />
+    <!-- <link rel="stylesheet" href="leaflet.css" /> -->
+    <!-- <link rel="stylesheet" href="vanilla-notify.css" /> -->
+    <link rel="stylesheet" href="style.min.css" />
 </head>
 
 <body>
@@ -38,7 +38,7 @@
     <div class="container" id="main-container">
         <div class="row">
             <div class="col-12 text-center">
-                <h4 id="progress_info">Generowanie kluczy <img src="loader.gif" style="max-height:50px"></h4>
+                <h4 id="progress_info">Proszę czekaj <img src="loader.gif" style="max-height:50px"></h4>
 
             </div>
         </div>
@@ -71,11 +71,6 @@
             <button disabled class="btn btn-outline-success my-2 my-sm-0" id="send_button">Wyślij</button>
         </div>
     </nav>
-    <script src="/bundle.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="/vanilla-notify.js"></script>
-    <script src="/leaflet.js"></script>
-    <script src="/leaflet.geometryutil.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/core.min.js"></script>
 

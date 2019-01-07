@@ -10,6 +10,12 @@ var autoprefixer = require('gulp-autoprefixer');
 const paths = {
     scripts: {
         src: [
+            'bundles/auth.js',
+            'lib/jquery/jquery.min.js',
+            'lib/notify/vanilla-notify.js',
+            'lib/leaflet/leaflet.js',
+            'lib/leaflet/leaflet.geometryutil.js',
+            'temp/app/helpers/helpers.js',
             'temp/app/helpers/helpers.js',
             'temp/app/helpers/notify.js',
             'temp/app/geo/cords.js',
@@ -66,5 +72,15 @@ gulp.task('watch', function () {
     gulp.watch('assets/sass/style.scss', ['sass']);
 });
 
+gulp.task('css', function () {
+    return gulp.src([
+            'lib/leaflet/leaflet.css',
+            'lib/notify/vanilla-notify.css',
+            'assets/css/style.css'
+        ])
+        .pipe(minifyCSS())
+        .pipe(concat('style.min.css'))
+        .pipe(gulp.dest('dist'));
+});
 
-gulp.task('default', ['sass', 'ts', 'warehouse', 'scripts', 'watch']);
+gulp.task('default', ['ts', 'warehouse', 'scripts', 'watch']);
