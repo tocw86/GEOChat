@@ -160,6 +160,6 @@ io.sockets.on('connection', function (socket) {
 
 
 
-http.listen(3003, function () {
-    console.log('listening on *:3003');
+http.listen(3007, function () {
+    console.log('listening on *:3007');
 });
