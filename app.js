@@ -113,10 +113,17 @@ io.sockets.on('connection', function (socket) {
         if (users.isJson(data)) {
             var connection_data = JSON.parse(data);
             if (connection_data.hasOwnProperty('to') && connection_data.hasOwnProperty('encrypted')) {
-                socket.to(connection_data.to).emit('receive_message', data);
+                if(socket.connected[connection_data.to]){
+                    socket.to(connection_data.to).emit('receive_message', data);
+                }
             }
         }
 
+    });
+
+    socket.on('isConnected', function(id, ackFn) {
+        var otherSocket = io.sockets.connected[id];
+        ackFn(!!otherSocket && otherSocket.connected);
     });
 
     socket.on('handshake_failed', function (data) {

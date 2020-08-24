@@ -302,12 +302,24 @@ class Init {
                     };
                     connection_data.encrypted = self.auth.encrypt(text, self.communicator.getFriendPublicKey());
                     connection_data.to = self.communicator.getFriendId();
-                    self.socket.emit('send_message', JSON.stringify(connection_data));
-                    (<HTMLInputElement>document.getElementById("chat_box")).value = null;
-                    let div = self.helper.makeBubble('you', text);
-                    div.scrollIntoView();
-                    let size: number = 140;
-                    (<HTMLDivElement>document.getElementById('text_counter')).innerHTML = size.toString();
+             
+                    self.socket.emit('isConnected', connection_data.to, function(result: any) {
+
+                        if(result){
+
+                            self.socket.emit('send_message', JSON.stringify(connection_data));
+                            (<HTMLInputElement>document.getElementById("chat_box")).value = null;
+                            let div = self.helper.makeBubble('you', text);
+                            div.scrollIntoView();
+                            let size: number = 140;
+                            (<HTMLDivElement>document.getElementById('text_counter')).innerHTML = size.toString();
+
+                        }else{
+                            this.notify.makeNotify("error", "Użytkownik rozłączył się, proszę odśwież stronę", "Error");
+                            document.getElementById('status_notify').setAttribute('class', 'status_notify n_disconnect');
+                        }
+
+                    });
                 }
 
                 // self.notify.makeNotify('notify', text, self.user.getUserId(), "topRight");
