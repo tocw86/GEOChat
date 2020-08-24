@@ -86,6 +86,10 @@ class Init {
             //self.socket.emit('remove_user', self.user_id);
         });
 
+        var button = document.getElementById('exit_button');
+        button.addEventListener("click", function () {
+            window.location.href = "/";
+        });
     }
 
 
@@ -166,7 +170,7 @@ class Init {
                 }));
 
             } else {
-                alert("To far to make connection (" + distance + " m). Min. distance 3000m");
+                alert("Za daleko żeby rozpocząć połączenie(" + distance + " m). Min. odległość markera 3000m");
             }
 
 
@@ -195,7 +199,7 @@ class Init {
         if (this.user.isConnected() && this.socket.connected) {
             return true;
         } else if (this.user.isConnected() && !this.socket.connected) {
-            this.notify.makeNotify("error", "Disconnected please refresh page", "Error");
+            this.notify.makeNotify("error", "Rozłączono, proszę odśwież stronę", "Error");
             document.getElementById('status_notify').setAttribute('class', 'status_notify n_disconnect');
             this.user.disconnect();
             this.cleanAllMarkers();
@@ -385,7 +389,7 @@ class Init {
                     self.user.startMoving();
                     self.user.setEnable();
                     self.socket.emit('handshake_failed', data);
-                    self.notify.makeNotify('error', 'Private Room', 'Refused invitation');
+                    self.notify.makeNotify('error', 'Prywatny pokój', 'Odrzucono');
                     document.getElementById('status_notify').setAttribute('class', 'status_notify n_disconnect');
                     return false;
                 }

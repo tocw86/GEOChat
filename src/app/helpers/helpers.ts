@@ -100,6 +100,7 @@ namespace Helpers {
         public activateHTML(): void {
             (<HTMLInputElement>document.getElementById("chat_box")).removeAttribute("disabled");
             (<HTMLButtonElement>document.getElementById("send_button")).removeAttribute("disabled");
+            (<HTMLButtonElement>document.getElementById("exit_button")).removeAttribute("disabled");
             this.blurChat();
             this.showChatContainer();
             this.triggerEnterKey();
